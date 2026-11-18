@@ -69,7 +69,7 @@
 const CONFIG={
  word:'NATUR',
  photoTasks:[
-  {title:'Ein Platz zum Verweilen',clue:'Was braucht es für einen gemütlichen Abend in guter Gesellschaft?',instruction:'Fotografiere einen Stuhl. Ein Tisch darf gerne mit aufs Bild.',icon:'armchair',target:'chair',targetLabel:'Stuhl'},
+  {title:'Ein Platz zum Verweilen',clue:'Was braucht es für einen gemütlichen Abend in guter Gesellschaft?',instruction:'Fotografiere einen Stuhl – ein Tisch darf mit aufs Bild.',icon:'armchair',target:'chair',targetLabel:'Stuhl'},
   {title:'Ein kleiner Genuss',clue:'Ein gemütlicher Abend verdient manchmal ein besonderes Glas.',instruction:'Fotografiere ein Weinglas – es darf auch leer sein.',icon:'wine',target:'wine glass',targetLabel:'Weinglas'}
  ],
  // Diese beiden Werte lassen sich direkt ändern.
@@ -194,7 +194,7 @@ const PHOTO_SSD='https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/
 let photoModelPromise=null,photoGlobalBusy=false;
 function renderPhotos(){
  const done=state.photoDone.every(Boolean);
- E('main').innerHTML=panel(2,'Auf Spurensuche','Ein gemütlicher Abend braucht die richtige Vorbereitung. Finde zwei kleine Dinge und halte sie auf Fotos fest.')+
+ E('main').innerHTML=panel(2,'Auf Spurensuche','Ein gemütlicher Abend braucht die richtige Vorbereitung. Finde alle Objekte und halte sie auf Fotos fest.')+
  `<div class="missions">${CONFIG.photoTasks.map((task,i)=>{
   const c=photoChecks[i],ready=Boolean(photos[i]),accepted=state.photoDone[i];
   const skip=ready&&!accepted&&(c.failures>=CONFIG.photoRecognition.manualAfterFailures||c.systemError);
