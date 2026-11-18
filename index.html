@@ -215,8 +215,9 @@ function renderHex(){
  if(state.hexCompleted){
    if(!state.hexRevealed){
      E('main').innerHTML=panel(4,'Die Wildnis ist wieder vollständig','Geschafft! Alle sechs Plättchen bilden wieder eine zusammenhängende Landschaft.')+
-     `<div class="note">Alle neun Übergänge stimmen. Hier ist deine fertig gelegte Landschaft.</div>${hexSvg(false)}<div class="controls" style="justify-content:center;margin-top:22px"><button class="btn" id="hex-reveal">Geschenk enthüllen</button></div></section>`;
+     `<div class="note">Alle neun Übergänge stimmen. Hier ist deine fertig gelegte Landschaft.</div>${hexSvg(false)}<div class="controls" style="justify-content:center;margin-top:22px"><button class="btn" id="hex-reveal">Geschenk enthüllen</button><button class="btn secondary" id="hex-replay">Mosaik erneut spielen</button></div></section>`;
      E('hex-reveal').onclick=()=>{state.hexRevealed=true;save();renderHex()};
+     E('hex-replay').onclick=()=>{state.hexCompleted=false;state.hexRevealed=false;state.hexOrder=[4,2,5,0,3,1];selectedHex=-1;save();renderHex()};
    } else {
      E('main').innerHTML=panel(4,'Das letzte Kapitel','Du hast auch die vierte Aufgabe gelöst.')+
      `<div class="finale"><div class="large-hex">✦</div><div class="eyebrow">Alle vier Kapitel abgeschlossen</div><h2>${CONFIG.finalTitle}</h2><p>${CONFIG.finalText}</p><p class="gift-name" style="font:italic 32px Georgia,serif;margin-top:25px">Cascadia · Im Herzen der Natur</p><div class="controls" style="justify-content:center"><button class="btn secondary" id="revisit">Zurück zur Landschaft</button></div></div></section>`;
