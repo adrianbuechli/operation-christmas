@@ -27,7 +27,7 @@ h2{font-size:27px;margin:0 0 8px}
 .preview canvas{width:100%;height:auto;display:block}
 .preview .empty{color:#9eb1a7;font-size:13px;text-align:center;padding:38px 15px}
 .file{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
-.buttons{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.buttons{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}.buttons .upload{margin:0}.buttons .photo-start{flex:1 1 135px}
 .btn,.upload{border:1px solid var(--gold);border-radius:9px;background:var(--gold);color:#20382b;min-height:43px;padding:10px 13px;font-weight:750;font-size:13px;cursor:pointer;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn.alt{background:transparent;border-color:#84a596;color:var(--text)}
 .btn.subtle{background:#ffffff0b;color:var(--text);border-color:var(--border)}
@@ -59,7 +59,7 @@ footer a{color:#d6e6d8}
 <header><span>✦ Operation Wildnis · KI-Prototyp</span><a href="./">Zum Weihnachtsrätsel</a></header>
 <main>
 <h1>Foto-KI im Praxistest</h1>
-<p class="lead">Kann das Smartphone einen Stuhl und ein Weinglas erkennen? Wähle für jede Aufgabe ein Foto aus oder fotografiere direkt. Bei Problemen kannst du das Bild jederzeit ohne KI akzeptieren.</p>
+<p class="lead">Kann das Smartphone einen Stuhl und ein Weinglas erkennen? Wähle für jede Aufgabe ein Foto aus oder öffne direkt die Kamera. Nach zwei erfolglosen KI-Prüfungen kannst du das Foto auch ohne KI akzeptieren.</p>
 <div class="banner" aria-live="polite">
 <strong id="global-title">Bereit zum Testen</strong>
 <p id="global-detail">Das KI-Modell wird erst geladen, wenn du auf «Mit KI prüfen» klickst. Die Fotos verlassen dein Gerät nicht.</p>
@@ -71,10 +71,11 @@ footer a{color:#d6e6d8}
 <p class="desc">Fotografiere einen Stuhl. Die Bilderkennung sucht nach einem <strong>Stuhl</strong> (<code>chair</code>).</p>
 <div class="preview"><canvas id="canvas-0" hidden aria-label="Foto von Mission 1 mit Erkennungsmarkierungen"></canvas><div class="empty" id="empty-0">Noch kein Foto ausgewählt</div></div>
 <div class="buttons">
-<label for="file-0" class="upload">📷 Foto auswählen</label>
+<label for="camera-0" class="upload photo-start">📷 Kamera öffnen</label><input class="file" type="file" accept="image/*" capture="environment" id="camera-0">
+<label for="file-0" class="upload photo-start">🖼️ Foto auswählen</label>
 <input class="file" type="file" accept="image/*" id="file-0">
 <button type="button" class="btn alt" id="check-0" disabled>Mit KI prüfen</button>
-<button type="button" class="btn subtle" id="skip-0" disabled>Ohne Bilderkennung fortfahren</button>
+<button type="button" class="btn subtle" id="skip-0" disabled hidden>Ohne Bilderkennung fortfahren</button>
 </div>
 <p class="card-status" id="status-0" role="status" aria-live="polite">Wähle zuerst ein Foto aus.</p>
 <div class="result" id="result-0"></div>
@@ -85,10 +86,11 @@ footer a{color:#d6e6d8}
 <p class="desc">Fotografiere ein Weinglas – es darf leer sein. Die Bilderkennung sucht nach einem <strong>Weinglas</strong> (<code>wine glass</code>).</p>
 <div class="preview"><canvas id="canvas-1" hidden aria-label="Foto von Mission 2 mit Erkennungsmarkierungen"></canvas><div class="empty" id="empty-1">Noch kein Foto ausgewählt</div></div>
 <div class="buttons">
-<label for="file-1" class="upload">📷 Foto auswählen</label>
+<label for="camera-1" class="upload photo-start">📷 Kamera öffnen</label><input class="file" type="file" accept="image/*" capture="environment" id="camera-1">
+<label for="file-1" class="upload photo-start">🖼️ Foto auswählen</label>
 <input class="file" type="file" accept="image/*" id="file-1">
 <button type="button" class="btn alt" id="check-1" disabled>Mit KI prüfen</button>
-<button type="button" class="btn subtle" id="skip-1" disabled>Ohne Bilderkennung fortfahren</button>
+<button type="button" class="btn subtle" id="skip-1" disabled hidden>Ohne Bilderkennung fortfahren</button>
 </div>
 <p class="card-status" id="status-1" role="status" aria-live="polite">Wähle zuerst ein Foto aus.</p>
 <div class="result" id="result-1"></div>
@@ -96,10 +98,10 @@ footer a{color:#d6e6d8}
 </div>
 <div class="bottom" aria-live="polite">
 <strong id="progress">0 von 2 Fotos akzeptiert</strong>
-<p id="progress-detail">Bei jeder Aufgabe reicht entweder eine erfolgreiche Erkennung oder die manuelle Freigabe.</p>
+<p id="progress-detail">Bei jeder Aufgabe zählt eine erfolgreiche Erkennung; nach zwei Fehlversuchen oder einem technischen Fehler ist eine manuelle Freigabe möglich.</p>
 <a class="btn" href="./" id="finish-link" hidden>Zurück zum Weihnachtsrätsel</a>
 </div>
-<p class="note">Testversion, unabhängig vom eigentlichen Rätsel: Die Freigaben dieser Seite verändern deinen Spielfortschritt nicht. Das Foto wird vor der Erkennung auf maximal 960 Pixel Kantenlänge reduziert. Nur die KI-Bibliotheken und Modellgewichte werden bei Bedarf aus dem Internet geladen; das Foto selbst wird lokal im Browser verarbeitet. Die KI kann sich irren, besonders bei transparenten Weingläsern.</p>
+<p class="note">Testversion, unabhängig vom eigentlichen Rätsel: Die Freigaben dieser Seite verändern deinen Spielfortschritt nicht. Das Foto wird vor der Erkennung auf maximal 960 Pixel Kantenlänge reduziert. Nur die KI-Bibliotheken und Modellgewichte werden bei Bedarf aus dem Internet geladen; das Foto selbst wird lokal im Browser verarbeitet. Nach zwei erfolglosen KI-Prüfungen (oder sofort bei einem technischen Fehler) erscheint die manuelle Freigabe. Die KI kann sich irren, besonders bei transparenten Weingläsern.</p>
 </main>
 <footer>
 Verwendet <a href="https://github.com/tensorflow/tfjs-models/tree/master/coco-ssd" target="_blank" rel="noopener noreferrer">TensorFlow.js COCO-SSD</a> (Lite MobileNet v2) und <a href="https://www.tensorflow.org/js" target="_blank" rel="noopener noreferrer">TensorFlow.js</a>. Unabhängiger Prototyp für das private Weihnachtsrätsel.
@@ -111,8 +113,8 @@ const MIN_SCORE=0.30;
 const MODEL_TF_URL='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js';
 const MODEL_SSD_URL='https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js';
 const tasks=[
- {label:'Stuhl',target:'chair',canvas:document.getElementById('canvas-0'),version:0,base:null,accepted:false,busy:false},
- {label:'Weinglas',target:'wine glass',canvas:document.getElementById('canvas-1'),version:0,base:null,accepted:false,busy:false}
+ {label:'Stuhl',target:'chair',canvas:document.getElementById('canvas-0'),version:0,base:null,accepted:false,busy:false,failed:0,systemError:false},
+ {label:'Weinglas',target:'wine glass',canvas:document.getElementById('canvas-1'),version:0,base:null,accepted:false,busy:false,failed:0,systemError:false}
 ];
 const el=id=>document.getElementById(id);
 let modelPromise=null;
@@ -123,13 +125,15 @@ function status(i,message,kind=''){
 function updateButtons(i){
  const t=tasks[i],ready=Boolean(t.base);
  el('check-'+i).disabled=!ready||t.busy;
- el('skip-'+i).disabled=!ready||t.busy;
+ const bypass=el('skip-'+i);
+ bypass.hidden=!ready||t.accepted||(t.failed<2&&!t.systemError);
+ bypass.disabled=!ready||t.busy||t.accepted;
  el('check-'+i).textContent=t.busy?'Bitte warten …':'Mit KI prüfen';
 }
 function updateProgress(){
  const accepted=tasks.filter(t=>t.accepted).length;
  el('progress').textContent=accepted+' von 2 Fotos akzeptiert';
- el('progress-detail').textContent=accepted===2?'Beide Aufgaben abgeschlossen – du kannst zum Weihnachtsrätsel zurückkehren.':'Bei jeder Aufgabe reicht eine KI-Erkennung oder die manuelle Freigabe.';
+ el('progress-detail').textContent=accepted===2?'Beide Aufgaben abgeschlossen – du kannst zum Weihnachtsrätsel zurückkehren.':'Bei jeder Aufgabe zählt die KI-Erkennung; bei Problemen ist nach zwei Fehlversuchen eine manuelle Freigabe möglich.';
  el('finish-link').hidden=accepted!==2;
 }
 function drawBase(i){
@@ -169,7 +173,7 @@ async function fileChanged(i,file){
   t.base=base;
   drawBase(i);
   t.canvas.hidden=false;el('empty-'+i).hidden=true;
-  status(i,'Foto bereit. Du kannst die KI testen oder ohne Bilderkennung fortfahren.');
+  status(i,'Foto bereit. Jetzt kannst du die KI-Erkennung testen.');
  }catch(error){if(version===t.version)status(i,error.message||'Foto konnte nicht geladen werden.','warn');}
  finally{if(version===t.version){t.busy=false;updateButtons(i);}}
 }
@@ -190,7 +194,7 @@ function loadScript(src,timeout=24000){
 async function loadModel(){
  if(modelPromise)return modelPromise;
  modelPromise=(async()=>{
-  globalStatus('KI wird geladen …','Einmaliger Download der Bibliotheken und Modellgewichte. Du kannst die Fotos auch ohne KI akzeptieren.');
+  globalStatus('KI wird geladen …','Einmaliger Download der Bibliotheken und Modellgewichte. Bei technischen Problemen erscheint die manuelle Freigabe.');
   if(!window.tf)await loadScript(MODEL_TF_URL);
   if(!window.cocoSsd)await loadScript(MODEL_SSD_URL);
   if(!window.tf||!window.cocoSsd)throw new Error('KI-Bibliothek fehlt.');
@@ -262,25 +266,26 @@ async function check(i){
    const confidence=Math.round(Math.max(...hits.map(p=>p.score))*100);
    status(i,t.label+' erkannt! ('+confidence+' %). Foto akzeptiert ✓','good');
   }else{
-   t.accepted=false;
-   status(i,t.label+' nicht sicher erkannt. Neues Foto versuchen oder ohne Bilderkennung fortfahren.','warn');
+   t.accepted=false;t.failed++;
+   status(i,t.label+' nicht sicher erkannt. '+(t.failed>=2?'Du kannst ein weiteres Foto versuchen oder ohne KI fortfahren.':'Bitte nochmals versuchen – auch mit einem neuen Foto.'),'warn');
   }
  }catch(error){
-  if(version===t.version)status(i,'KI-Prüfung fehlgeschlagen: '+(error.message||'unbekannter Fehler')+'. Du kannst ohne KI fortfahren.','warn');
+  if(version===t.version){t.systemError=true;status(i,'KI-Prüfung fehlgeschlagen: '+(error.message||'unbekannter Fehler')+'. Du kannst ohne KI fortfahren.','warn');}
  }finally{
   if(version===t.version){t.busy=false;updateButtons(i);updateProgress();}
  }
 }
 function skip(i){
  const t=tasks[i];
- if(!t.base||t.busy)return;
+ if(!t.base||t.busy||(t.failed<2&&!t.systemError))return;
  t.accepted=true;drawBase(i);
  el('result-'+i).classList.remove('visible');
  status(i,'Foto manuell akzeptiert ✓ (ohne KI-Erkennung).','good');
  updateProgress();
 }
 for(let i=0;i<tasks.length;i++){
- el('file-'+i).addEventListener('change',event=>fileChanged(i,event.target.files?.[0]));
+ el('file-'+i).addEventListener('change',event=>{fileChanged(i,event.target.files?.[0]);event.target.value=''});
+ el('camera-'+i).addEventListener('change',event=>{fileChanged(i,event.target.files?.[0]);event.target.value=''});
  el('check-'+i).addEventListener('click',()=>check(i));
  el('skip-'+i).addEventListener('click',()=>skip(i));
 }
