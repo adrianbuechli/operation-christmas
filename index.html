@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#102c28">
+  <title>Operation Wildnis · Ein Weihnachtsrätsel</title>
+  <style>
+    :root{--bg:#102c28;--bg2:#163b34;--cream:#f4eedc;--muted:#c4cfb9;--border:rgba(235,239,219,.23);--green:#88ae88;--gold:#dfbb76;--dark:#122a25;--card:#183e35;--soft:#20493e;--red:#c88479}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--cream);font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;min-height:100dvh;overflow-x:hidden}
+    body:before{content:'';pointer-events:none;position:fixed;inset:0;opacity:.30;background:radial-gradient(ellipse at 90% -10%,#386a54 0,transparent 42%),radial-gradient(ellipse at -10% 85%,#315949 0,transparent 50%);z-index:-2}
+    body:after{content:'';pointer-events:none;position:fixed;inset:0;opacity:.11;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cpath d='M-40 46C15 17 20 78 93 41s94 13 188-16 M-37 83C27 46 38 111 108 77s97 20 179-11 M-21 121C60 77 42 151 137 120s90 13 140-7 M-30 175C38 130 73 185 138 159s111 10 145-4 M-42 218C42 176 75 239 144 207s92 2 142-3' fill='none' stroke='%23e1edd0' stroke-width='1.1'/%3E%3C/svg%3E");z-index:-1}
+    button,input{font:inherit}button{cursor:pointer}.shell{width:min(850px,calc(100% - 32px));margin:auto}.top{padding:24px 0 0;display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:750;letter-spacing:.16em;text-transform:uppercase}.brand-emblem{width:36px;height:36px;background:#e5cf96;color:#17372e;display:grid;place-items:center;clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);font-size:18px}.tag{border:1px solid var(--border);border-radius:99px;padding:7px 11px;color:var(--muted);font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+    .hero{padding:50px 0 28px}.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:800}.hero h1{font-family:Georgia,serif;font-size:clamp(43px,8vw,77px);line-height:1.02;font-weight:400;letter-spacing:-.045em;margin:15px 0}.hero h1 i{color:#a5c79e;font-style:italic}.lead{max-width:600px;font-size:16px;line-height:1.75;color:var(--muted);margin:0}.small-line{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px}.small-line:before{content:'';width:34px;height:1px;background:var(--gold)}
+    .progress{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:17px 0 24px}.progress .step{min-width:0;background:rgba(255,255,255,.055);border:1px solid var(--border);border-radius:11px;padding:11px 12px;color:#9bb1a3}.progress .step.current{border-color:#d8b879;background:#d8b87920;color:#fff6da}.progress .step.done{background:#83a68120;color:#d0e7bd}.progress .num{font-family:Georgia,serif;font-size:20px;margin-bottom:2px}.progress .txt{font-size:11px;letter-spacing:.02em}
+    main{min-height:390px}.panel{border:1px solid var(--border);background:linear-gradient(155deg,rgba(34,75,61,.91),rgba(20,54,46,.95));border-radius:22px;padding:clamp(20px,5vw,40px);box-shadow:0 25px 75px #051a153b}.chapter{display:flex;gap:13px;align-items:center;margin-bottom:19px;color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.17em;text-transform:uppercase}.chapter:after{content:'';height:1px;background:var(--border);flex:1}.panel h2{font:400 clamp(29px,5vw,41px)/1.14 Georgia,serif;letter-spacing:-.025em;margin:0 0 13px}.panel p{line-height:1.7;color:var(--muted);margin:0 0 16px}.note{border-left:3px solid #adbb8b;padding:9px 14px;background:#0d2c244f;color:#d4e2ce;border-radius:0 7px 7px 0;font-size:13px;line-height:1.6;margin:16px 0}.label{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.18em;font-weight:800;margin-bottom:8px}
+    .btn{background:var(--gold);color:#183027;border:1px solid var(--gold);padding:11px 16px;border-radius:9px;font-weight:750;transition:transform .15s,opacity .15s;min-height:42px}.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.btn.secondary{background:transparent;color:var(--cream);border-color:#78988b}.btn.ghost{background:#ffffff0b;color:var(--cream);border-color:var(--border)}.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:17px}.muted{color:var(--muted);font-size:13px}.msg{min-height:24px;margin:10px 0 6px;color:#f1c7a2;font-size:13px;line-height:1.5}.success{color:#d2e6ae}
+    /* Wordle */
+    .wordle-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center;margin:24px 0}.wordle-board{display:grid;grid-template-rows:repeat(6,1fr);gap:5px;max-width:300px;margin:auto}.guess-row{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.letter{aspect-ratio:1;border:1px solid #66847a99;display:grid;place-items:center;border-radius:4px;font-size:clamp(18px,4.2vw,27px);font-weight:800;line-height:1;color:#fff}.letter.filled{border-color:#a9c9b7}.letter.correct{background:#618a67;border-color:#618a67}.letter.present{background:#b79559;border-color:#b79559}.letter.absent{background:#4b5e59;border-color:#4b5e59}.letter.live{border-color:#d5b578}.keypad{max-width:360px;margin:18px auto 0;display:flex;flex-direction:column;gap:5px}.keys{display:flex;justify-content:center;gap:4px}.key{flex:1;min-width:0;max-width:40px;height:40px;border:0;border-radius:5px;background:#567267;color:#fff;font-weight:800;font-size:12px;padding:0}.key.wide{max-width:57px;flex:1.5}.key.correct{background:#618a67}.key.present{background:#b79559}.key.absent{background:#384e49}.wordle-aside{display:grid;gap:12px}.wordle-aside .tiny-card{background:#ffffff0a;padding:15px;border:1px solid var(--border);border-radius:12px}.tiny-card strong{font-family:Georgia,serif;font-size:23px;font-weight:400}.tiny-card span{font-size:13px;color:var(--muted);line-height:1.6;display:block;margin-top:6px}
+    .unlock{margin-top:25px;padding:21px;border:1px solid #d2bb7b7a;background:#cfaf6f0e;border-radius:14px}.unlock h3{font:400 25px Georgia,serif;margin:0 0 9px}.urlbox{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#0d2822;border:1px solid #62796b;border-radius:9px;padding:10px;word-break:break-all}.urlbox code{font:13px/1.6 ui-monospace,Consolas,monospace;color:#f7edcc;flex:1}.urlbox .fill{color:#ffcf8f;font-weight:800}.mini{font-size:12px!important;color:var(--muted);margin:8px 0 0!important}
+    /* Photos */
+    .missions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}.mission{background:#0f3029b8;border:1px solid var(--border);border-radius:14px;padding:20px;min-width:0}.mission .icon{width:49px;height:49px;border:1px solid var(--border);display:grid;place-items:center;border-radius:50%;font-size:25px;margin-bottom:14px}.mission h3{font:400 24px Georgia,serif;margin:0 0 7px}.mission .riddle{min-height:62px;font-style:italic;color:#dce6d2;font-size:15px}.mission .micro{font-size:12px;color:var(--muted);line-height:1.6}.file-input{display:none}.upload{display:inline-block;background:#d6b97b;color:#17352c;font-weight:700;border-radius:8px;padding:11px 12px;cursor:pointer;font-size:13px;line-height:1.2;margin-top:12px}.preview{margin-top:12px;border:1px dashed #9bb7a16b;border-radius:9px;min-height:95px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#9fb5a9;font-size:12px;text-align:center}.preview img{width:100%;max-height:160px;object-fit:cover;display:block}.code-entry{display:flex;gap:8px;margin-top:12px}.code-entry input{width:90px;min-width:0;padding:10px;border-radius:8px;border:1px solid #91ae9f;background:#102c28;color:#fff;text-transform:uppercase;text-align:center;letter-spacing:.2em;font-weight:800}.code-entry button{font-size:12px}.mission.ok{border-color:#9dc69d}.mission .result{min-height:20px;font-size:12px;margin-top:8px;color:#e2bda1}.mission .result.ok{color:#bdddab}
+    /* Connections */
+    .conn-solved{display:grid;gap:7px;margin:18px 0 10px}.solved-row{border-radius:10px;padding:14px 12px;text-align:center;color:#1e2c25}.solved-row strong{display:block;font-size:16px}.solved-row span{display:block;font-size:12px;margin-top:4px}.conn-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:20px 0 16px}.conn-tile{border-radius:9px;border:1px solid #e5dac1;background:#e3dcca;color:#1d332b;text-align:center;min-height:72px;padding:8px 4px;font-size:clamp(10px,1.5vw,13px);font-weight:800;line-height:1.2;overflow-wrap:anywhere}.conn-tile.selected{background:#658675;color:#fff;border-color:#a6c0a8}.conn-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.dots{display:flex;gap:6px;align-items:center}.dot{width:11px;height:11px;border-radius:50%;background:#e6c991}.dot.lost{background:#3a6255;border:1px solid #719082}.conn-fail{color:#efc49c;font-size:13px}.connect-hint{font-size:13px;color:#eed29a}
+    /* Hex */
+    .hex-board{width:100%;max-width:690px;display:block;margin:10px auto 0;touch-action:manipulation}.hex-item{cursor:pointer;transition:filter .17s}.hex-item:focus{outline:none}.hex-item.selected{filter:drop-shadow(0 0 8px #edce83)}.hex-item .tile-bg{fill:#f0e9d7;stroke:#223b32;stroke-width:2}.hex-item.selected .tile-bg{fill:#fff5d8;stroke:#e9ca82;stroke-width:4}.hex-edge{stroke-linecap:butt;stroke-width:12}.hex-symbol{font-size:30px;pointer-events:none}.hex-name{font-size:13px;font-weight:750;fill:#2d463b;pointer-events:none}.hex-board-bg{fill:none;stroke:#6c8978;stroke-width:1.2;stroke-dasharray:4 7;opacity:.5}.hex-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;margin-top:4px}.legend-item{display:flex;gap:6px;align-items:center;font-size:12px;color:#d7e2ce}.legend-swatch{width:13px;height:13px;border-radius:3px;display:inline-block}.hex-score{text-align:center;color:#d5d7b3;font-family:Georgia,serif;font-size:21px;margin:8px 0 3px}.hex-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+    /* Finale */
+    .finale{text-align:center;padding:25px 0}.finale .large-hex{font-size:64px;display:grid;place-items:center;margin:0 auto 20px;width:115px;height:115px;background:#e7c887;color:#12362b;clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%)}.finale h2{font-size:clamp(37px,7vw,58px);line-height:1.08}.finale .gift-name{color:#eed39b;font-style:italic}.finale p{max-width:525px;margin:15px auto;line-height:1.8}.locked{text-align:center;padding:45px 10px}.locked .lock{font-size:39px}.locked h2{margin-top:12px}.footer{padding:36px 0 25px;display:flex;justify-content:space-between;gap:10px;font-size:11px;color:#8fac9d}.hidden{display:none!important}
+    @media(max-width:650px){.top{padding-top:15px}.hero{padding:37px 0 20px}.progress .step{padding:9px 8px}.progress .txt{font-size:10px}.wordle-layout{grid-template-columns:1fr;gap:13px}.wordle-aside{grid-template-columns:1fr 1fr}.wordle-aside .tiny-card{padding:12px}.wordle-aside .tiny-card strong{font-size:19px}.missions{grid-template-columns:1fr}.mission .riddle{min-height:0}.mission{padding:17px}.conn-tile{min-height:64px;font-size:10px}.panel{padding:19px}.footer{flex-direction:column}.key{height:39px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="top"><div class="brand"><div class="brand-emblem">✦</div><span>Geheime Mission</span></div><div class="tag">24. Dezember · Edition 01</div></header>
+  <section class="hero"><div class="eyebrow">Ein Rätsel in vier Kapiteln</div><h1>Operation <i>Wildnis.</i></h1><p class="lead">Vier Prüfungen. Zwei Fotografien. Ein verborgenes Ziel. Folge den Spuren, entschlüssele die Zeichen und bringe alles wieder zusammen.</p></section>
+  <nav class="progress" id="progress" aria-label="Spielfortschritt"></nav>
+  <main id="main" aria-live="polite"></main>
+  <footer class="footer"><span>Ein kleines Abenteuer für Heiligabend ✦</span><span>Dein Fortschritt wird nur auf diesem Gerät gespeichert.</span></footer>
+</div>
+<script>
+'use strict';
+/* ============================ ANPASSUNGEN ============================
+   Hier kannst du die Rätseltexte später unkompliziert ändern.
+   Bei den Fotoaufgaben wird ausschliesslich geprüft, ob zwei
+   Bilddateien ausgewählt wurden. Die Inhalte werden NICHT überprüft
+   und die Bilder werden NICHT an GitHub oder einen Server gesendet.
+   Achtung: Dies ist ein privates Rätsel, keine sichere Zugangskontrolle:
+   Lösungen sind im öffentlich einsehbaren HTML-Code enthalten.
+===================================================================== */
+const CONFIG={
+ word:'NATUR',
+ photoTasks:[
+   {title:'Ein Platz zum Spielen',clue:'Wo spielt man am liebsten in guter Gesellschaft?',instruction:'Fotografiere einen Stuhl zusammen mit einem Tisch. Beide sollen auf demselben Bild zu sehen sein.',icon:'▤'},
+   {title:'Doppeltes Glück',clue:'Zwei kleine Gegenstände mit jeweils sechs Seiten.',instruction:'Fotografiere zwei Würfel nebeneinander. Welche Zahlen oben liegen, spielt keine Rolle.',icon:'⚄'}
+ ],
+ finalTitle:'Die Wildnis lebt wieder.',
+ finalText:'Du hast Wörter entschlüsselt, Spuren gefunden, Zusammenhänge entdeckt und Lebensräume verbunden. Dein Geschenk wartet dort, wo du ein Sechseck findest.'
+};
+const KEY='operation-wildnis-v2';
+const baseState={progress:1,wordGuesses:[],wordWon:false,photoDone:[false,false],connSolved:[],connMistakes:4,hexOrder:[4,2,5,0,3,1],hexCompleted:false};
+let state={...baseState};
+try{const stored=JSON.parse(localStorage.getItem(KEY)||'{}');state={...baseState,...stored};if(!Array.isArray(state.wordGuesses))state.wordGuesses=[];if(!Array.isArray(state.photoDone))state.photoDone=[false,false];if(!Array.isArray(state.connSolved))state.connSolved=[];if(!Array.isArray(state.hexOrder)||state.hexOrder.length!==6)state.hexOrder=[4,2,5,0,3,1]}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+let liveWord='',selectedConn=[],selectedHex=-1,photos=[null,null],currentRoute='start',connTip='';
+const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const allRoutes={start:1,natur:2,wald:3,mosaik:4};
+const names=['Das Wort','Zwei Spuren','Vier Gruppen','Das Mosaik'];
+// Android öffnet lokale Downloads teilweise als content://-Adressen.
+// Deren Hash-URLs lassen sich nicht zuverlässig in Chrome kopieren oder öffnen.
+// Für lokale Dateien navigieren wir deshalb direkt innerhalb der Seite.
+const localMode=!['http:','https:'].includes(location.protocol);
+let localRoute='start';
+const E=id=>document.getElementById(id);
+function rootUrl(){return location.href.split('#')[0]+'#'}
+function routeTo(name){
+ if(localMode){localRoute=name;render()}
+ else{location.hash=name;if(location.hash==='#'+name)render()}
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function setProgress(n){state.progress=Math.max(state.progress,n);save()}
+function renderProgress(level){E('progress').innerHTML=names.map((n,i)=>`<div class="step ${state.progress>i+1?'done':''} ${level===i+1?'current':''}"><div class="num">${i+1<10?'0':''}${i+1}${state.progress>i+1?' ✓':''}</div><div class="txt">${n}</div></div>`).join('')}
+function route(){let key=localMode?localRoute:decodeURIComponent((location.hash||'#start').slice(1)).trim().toLowerCase();return allRoutes[key]?key:'start'}
+function render(){
+ if((location.hash||'').toLowerCase()==='#neustart'){E('main').innerHTML=`<section class="panel locked"><h2>Von vorne beginnen?</h2><p>Der Fortschritt auf diesem Gerät wird gelöscht. Die vier Aufgaben starten erneut.</p><div class="controls" style="justify-content:center"><button class="btn" id="really-reset">Ja, neu starten</button><button class="btn secondary" id="cancel-reset">Abbrechen</button></div></section>`;E('really-reset').onclick=()=>{state={...baseState,wordGuesses:[],photoDone:[false,false],connSolved:[],hexOrder:[4,2,5,0,3,1]};liveWord='';selectedConn=[];photos=[null,null];save();routeTo('start')};E('cancel-reset').onclick=()=>routeTo('start');return}
+ currentRoute=route();let level=allRoutes[currentRoute];renderProgress(level);let main=E('main');
+ if(level>state.progress){main.innerHTML=`<section class="panel locked"><div class="lock">🔒</div><h2>Diese Spur ist noch verborgen.</h2><p>Löse zuerst das vorherige Kapitel, um den Weg freizuschalten.</p><button class="btn" id="back-unlock">Zur letzten Aufgabe</button></section>`;E('back-unlock').onclick=()=>routeTo(Object.keys(allRoutes).find(k=>allRoutes[k]===state.progress)||'start');return}
+ if(level===1)renderWord();else if(level===2)renderPhotos();else if(level===3)renderConnections();else renderHex();
+}
+function panel(num,title,description){return `<section class="panel"><div class="chapter">Kapitel 0${num} / 04</div><h2>${title}</h2><p>${description}</p>`}
+function unlock(urlKey,headline,explanation){
+ if(localMode){return `<div class="unlock"><div class="label">Neue Spur entdeckt</div><h3>${headline}</h3><p>${explanation}</p><div class="controls"><button class="btn" id="local-next" data-route="${urlKey}">Weiter zu Kapitel ${allRoutes[urlKey]}</button></div><p class="mini">Lokaler Testmodus: Android unterstützt die kopierten content://-Adressen nicht als normale Browser-Links. Online wird hier das URL-Rätsel angezeigt.</p></div>`}
+ const base=rootUrl();return `<div class="unlock"><div class="label">Neue Spur entdeckt</div><h3>${headline}</h3><p>${explanation}</p><div class="urlbox"><code id="next-url">${escapeHtml(base)}<span class="fill">${"_".repeat(urlKey.length)}</span></code><button class="btn secondary" id="copy-prefix">URL kopieren</button></div><p class="mini">Ergänze die URL nach dem # mit <strong>${urlKey.length} Buchstaben</strong>. Kopiere die Adresse, füge das gesuchte Wort hinten an und öffne sie im Browser.</p></div>`
+}
+function activateCopy(){
+ const localNext=E('local-next');if(localNext){localNext.onclick=()=>routeTo(localNext.dataset.route);return}
+ const b=E('copy-prefix');if(b)b.onclick=async()=>{const content=rootUrl();try{await navigator.clipboard.writeText(content);b.textContent='Kopiert ✓'}catch(e){const ta=document.createElement('textarea');ta.value=content;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();b.textContent='Kopiert ✓'}}
+}
+/* ============================= 01 WORDLE =========================== */
+function judgeWord(guess,target){let res=Array(5).fill('absent'),freq={};for(let i=0;i<5;i++)if(guess[i]===target[i])res[i]='correct';else freq[target[i]]=(freq[target[i]]||0)+1;
+ for(let i=0;i<5;i++)if(res[i]!=='correct'&&(freq[guess[i]]||0)>0){res[i]='present';freq[guess[i]]--}return res}
+function renderWord(){const won=state.wordWon,over=state.wordGuesses.length>=6&&!won;
+ E('main').innerHTML=panel(1,'Das erste Zeichen','Manchmal beginnt die grösste Entdeckung mit einem einzigen Wort. Du hast sechs Versuche für einen Begriff mit fünf Buchstaben. Grün bedeutet richtiger Buchstabe am richtigen Ort, Gold bedeutet richtiger Buchstabe am falschen Ort.')+
+ `<div class="wordle-layout"><div><div id="wordle-board" class="wordle-board" aria-label="Wordle mit sechs Reihen"></div><div id="wordle-status" class="msg" role="status"></div></div><div class="wordle-aside"><div class="tiny-card"><strong>05 Buchstaben</strong><span>Ein alltägliches Wort. Es verbindet uns mit dem, was draussen wächst und lebt.</span></div><div class="tiny-card"><strong>06 Versuche</strong><span>Es gibt keine Wortliste: Jedes eingegebene Wort mit fünf Buchstaben wird ausgewertet.</span></div></div></div><div class="keypad" id="keypad"></div>${over?'<div class="controls"><button class="btn" id="word-restart">Neue sechs Versuche</button></div>':''}${won?unlock('natur','Das Wort ist der Schlüssel.','Das Rätselwort ergänzt die Adresse zur nächsten Station.'):''}</section>`;
+ drawWord();if(over){E('word-restart').onclick=()=>{state.wordGuesses=[];state.wordWon=false;liveWord='';save();renderWord()}}if(won)activateCopy();
+}
+function drawWord(){const board=E('wordle-board'),keyboard=E('keypad');if(!board||!keyboard)return;
+ const won=state.wordWon,over=state.wordGuesses.length>=6;
+ board.innerHTML=Array.from({length:6},(_,row)=>{const guess=state.wordGuesses[row]||(row===state.wordGuesses.length&&!won?liveWord:'');const graded=state.wordGuesses[row]?judgeWord(guess,CONFIG.word):null;return `<div class="guess-row">${Array.from({length:5},(_,col)=>`<div class="letter ${graded?graded[col]:(guess[col]?'filled':'')} ${row===state.wordGuesses.length&&col===liveWord.length&&!won?'live':''}">${escapeHtml(guess[col]||'')}</div>`).join('')}</div>`}).join('');
+ const rank={absent:1,present:2,correct:3},mapped={};state.wordGuesses.forEach(guess=>judgeWord(guess,CONFIG.word).forEach((g,i)=>{let ch=guess[i];if((rank[g]||0)>(rank[mapped[ch]]||0))mapped[ch]=g}));
+ const keyRows=['QWERTZUIOP','ASDFGHJKL','⌫YXCVBNM↵'];keyboard.innerHTML=keyRows.map(line=>`<div class="keys">${Array.from(line).map(ch=>`<button class="key ${ch==='⌫'||ch==='↵'?'wide':''} ${mapped[ch]||''}" data-key="${ch}" ${won||over?'disabled':''} aria-label="${ch==='⌫'?'Löschen':ch==='↵'?'Bestätigen':ch}">${ch}</button>`).join('')}</div>`).join('');
+ keyboard.querySelectorAll('[data-key]').forEach(btn=>btn.onclick=()=>wordInput(btn.dataset.key));
+}
+function wordInput(key){if(currentRoute!=='start'||state.wordWon||state.wordGuesses.length>=6)return;
+ if(key==='⌫'||key==='Backspace'){liveWord=liveWord.slice(0,-1)}else if(key==='↵'||key==='Enter'){if(liveWord.length!==5){E('wordle-status').textContent='Bitte genau fünf Buchstaben eingeben.';return}state.wordGuesses.push(liveWord);if(liveWord===CONFIG.word){state.wordWon=true;setProgress(2)}liveWord='';save();renderWord();return}
+ else if(/^[A-ZÄÖÜ]$/i.test(key)&&liveWord.length<5){liveWord+=key.toUpperCase()}
+ E('wordle-status').textContent='';drawWord()}
+document.addEventListener('keydown',e=>{if(currentRoute!=='start'||e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;
+ if(e.key==='Enter'||e.key==='Backspace'||/^[a-zA-ZäöüÄÖÜ]$/.test(e.key)){e.preventDefault();wordInput(e.key==='Backspace'?'⌫':e.key==='Enter'?'↵':e.key)}});
+/* ============================= 02 FOTOS =========================== */
+function renderPhotos(){
+ const done=state.photoDone.every(Boolean);
+ E('main').innerHTML=panel(2,'Auf Spurensuche','Ein guter Spieleabend braucht die richtige Vorbereitung. Erfülle zwei kleine Fotoaufträge. Die Website prüft nur, ob du je ein Bild ausgewählt hast – nicht, was darauf zu sehen ist.')+
+ `<div class="missions">${CONFIG.photoTasks.map((task,i)=>`<div class="mission ${state.photoDone[i]?'ok':''}"><div class="icon">${task.icon}</div><div class="label">Fotomission ${i+1} / 2</div><h3>${escapeHtml(task.title)}</h3><p class="riddle">«${escapeHtml(task.clue)}»</p><div class="micro">${escapeHtml(task.instruction)}</div><label class="upload" for="photo-${i}">${state.photoDone[i]?'Bild austauschen':'Bild aufnehmen / auswählen'}</label><input class="file-input" id="photo-${i}" type="file" accept="image/*"><div class="preview" id="preview-${i}">${photos[i]?`<img alt="Ausgewähltes Foto ${i+1}" src="${photos[i]}">`:state.photoDone[i]?'✓ Bild ausgewählt':'Noch kein Bild'}</div><div class="result ${state.photoDone[i]?'ok':''}" id="photo-result-${i}">${state.photoDone[i]?'Foto erledigt ✓':''}</div></div>`).join('')}</div><div class="note">Die Bilddateien werden ausschliesslich auf deinem Gerät angezeigt. Sie werden nicht hochgeladen oder gespeichert. Der Abschluss der zwei Aufgaben wird im Browser gemerkt.</div>${done?unlock('wald','Die Fotosafari ist abgeschlossen.','Für die nächste Station fehlt dir nur noch ein Ort: Wie heisst eine Gegend mit vielen Bäumen? Vier Buchstaben.'):''}</section>`;
+ CONFIG.photoTasks.forEach((task,i)=>{
+   const fi=E('photo-'+i);
+   fi.onchange=()=>{
+     const file=fi.files?.[0];
+     if(!file)return;
+     if(!file.type.startsWith('image/')){E('photo-result-'+i).textContent='Bitte eine Bilddatei wählen.';return}
+     if(photos[i])URL.revokeObjectURL(photos[i]);
+     photos[i]=URL.createObjectURL(file);
+     state.photoDone[i]=true;
+     if(state.photoDone.every(Boolean))setProgress(3);
+     save();
+     renderPhotos();
+   };
+ });
+ if(done)activateCopy();
+}
+/* =========================== 03 CONNECTIONS ======================== */
+const GROUPS=[
+ {name:'Wildtiere',words:['BÄR','HIRSCH','LACHS','FUCHS'],color:'#d9c27b'},
+ {name:'Wildnisarten',words:['WALD','FLUSS','GEBIRGE','PRÄRIE'],color:'#a7be8b'},
+ {name:'Spielmaterial',words:['TIERSCHEIBE','WILDNISPLÄTTCHEN','ZAPFENMARKER','WERTUNGSKARTE'],color:'#85b3b5'},
+ {name:'Spielaktionen',words:['ZIEHEN','ANLEGEN','PLATZIEREN','WERTEN'],color:'#b49ec6'}
+];
+const CONN_ORDER=['LACHS','WERTUNGSKARTE','WALD','ZIEHEN','BÄR','FLUSS','ZAPFENMARKER','ANLEGEN','PRÄRIE','FUCHS','TIERSCHEIBE','WERTEN','GEBIRGE','PLATZIEREN','HIRSCH','WILDNISPLÄTTCHEN'];
+function renderConnections(){const all=state.connSolved.length===4;
+ E('main').innerHTML=panel(3,'Was gehört zusammen?','16 Begriffe, vier versteckte Kategorien. Tippe vier Wörter an, die eine gemeinsame Gruppe bilden, und bestätige deine Auswahl. Jede Kategorie enthält genau vier Begriffe.')+
+ `<div class="conn-solved">${state.connSolved.map(index=>{const g=GROUPS[index];return `<div class="solved-row" style="background:${g.color}"><strong>${g.name}</strong><span>${g.words.join(' · ')}</span></div>`}).join('')}</div>${!all?`<div class="conn-grid" id="conn-grid">${CONN_ORDER.filter(w=>!state.connSolved.some(i=>GROUPS[i].words.includes(w))).map(w=>`<button class="conn-tile ${selectedConn.includes(w)?'selected':''}" data-word="${w}" aria-pressed="${selectedConn.includes(w)}">${w}</button>`).join('')}</div><div class="conn-footer"><div class="dots" aria-label="Verbleibende Fehlversuche"><span class="muted">Fehlversuche:</span>${[0,1,2,3].map(i=>`<i class="dot ${i>=state.connMistakes?'lost':''}"></i>`).join('')}</div><div class="controls"><button class="btn ghost" id="conn-clear">Auswahl löschen</button><button class="btn" id="conn-submit" ${selectedConn.length===4?'':'disabled'}>Prüfen</button></div></div><div class="msg" id="conn-msg">${escapeHtml(connTip)}</div>${state.connMistakes===0?'<div class="note">Keine Versuche mehr. Du kannst diese Station zurücksetzen und erneut versuchen.</div><button class="btn secondary" id="conn-restart">Erneut versuchen</button>':''}`:unlock('mosaik','Du hast die Verbindungen erkannt.','Vier Gruppen sind vollständig. Die nächste Station wartet unter dem Wort MOSAIK.')}</section>`;
+ if(all){activateCopy();return}
+ E('conn-grid').querySelectorAll('[data-word]').forEach(btn=>btn.onclick=()=>{const w=btn.dataset.word;if(state.connMistakes===0)return;selectedConn=selectedConn.includes(w)?selectedConn.filter(x=>x!==w):selectedConn.length<4?[...selectedConn,w]:selectedConn;renderConnections()});
+ E('conn-clear').onclick=()=>{selectedConn=[];renderConnections()};E('conn-submit').onclick=checkConnections;
+ if(E('conn-restart'))E('conn-restart').onclick=()=>{state.connMistakes=4;state.connSolved=[];selectedConn=[];connTip='';save();renderConnections()};
+}
+function checkConnections(){if(selectedConn.length!==4||state.connMistakes===0)return;
+ const match=GROUPS.findIndex(g=>g.words.every(w=>selectedConn.includes(w)));
+ if(match>=0&&!state.connSolved.includes(match)){state.connSolved.push(match);selectedConn=[];connTip='Gruppe gefunden ✓';if(state.connSolved.length===4)setProgress(4)}else{state.connMistakes--;const overlap=Math.max(...GROUPS.filter((g,i)=>!state.connSolved.includes(i)).map(g=>g.words.filter(w=>selectedConn.includes(w)).length));connTip=overlap===3?'Knapp! Drei der vier Begriffe gehören tatsächlich zusammen.':'Leider nicht dieselbe Gruppe.';selectedConn=[]}
+ save();renderConnections()}
+/* =========================== 04 HEXAGON =========================== */
+// Kantenreihenfolge: NO, O, SO, SW, W, NW. Eine eindeutige Anordnung.
+const TILES=[
+ {id:0,animal:'🐻',name:'Bär',edge:['W','G','G','P','F','W']},
+ {id:1,animal:'🦊',name:'Fuchs',edge:['W','F','F','R','G','W']},
+ {id:2,animal:'🦌',name:'Hirsch',edge:['F','W','R','W','F','G']},
+ {id:3,animal:'🐟',name:'Lachs',edge:['R','G','F','P','F','G']},
+ {id:4,animal:'🦅',name:'Bussard',edge:['W','R','G','G','G','F']},
+ {id:5,animal:'🌲',name:'Wald',edge:['W','F','P','G','R','R']}
+];
+const HAB={W:{name:'Wald',color:'#7ba77e'},F:{name:'Fluss',color:'#75aed5'},G:{name:'Gebirge',color:'#b0b8bd'},P:{name:'Prärie',color:'#e2b66b'},R:{name:'Feuchtgebiet',color:'#64b7a8'}};
+const ADJ=[[0,1,1,4],[1,2,1,4],[3,4,1,4],[4,5,1,4],[0,3,2,5],[1,3,3,0],[1,4,2,5],[2,4,3,0],[2,5,2,5]];
+const CENTERS=[[96,93],[207,93],[318,93],[151.5,189],[262.5,189],[373.5,189]];const R=64;
+function vertices(x,y){return [[x,y-R],[x+Math.sqrt(3)*R/2,y-R/2],[x+Math.sqrt(3)*R/2,y+R/2],[x,y+R],[x-Math.sqrt(3)*R/2,y+R/2],[x-Math.sqrt(3)*R/2,y-R/2]]}
+function matches(){return ADJ.filter(([a,b,ea,eb])=>TILES[state.hexOrder[a]].edge[ea]===TILES[state.hexOrder[b]].edge[eb]).length}
+function hexSvg(){return `<svg class="hex-board" viewBox="0 0 470 285" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Sechs vertauschbare Sechseckplättchen">${CENTERS.map(([x,y],pos)=>{const tile=TILES[state.hexOrder[pos]],v=vertices(x,y);return `<g class="hex-item ${selectedHex===pos?'selected':''}" data-hex="${pos}" role="button" tabindex="0" aria-label="${tile.name} an Position ${pos+1}"><polygon class="tile-bg" points="${v.map(q=>q.join(',')).join(' ')}"/><g>${tile.edge.map((e,i)=>{const a=v[i],b=v[(i+1)%6];return `<line class="hex-edge" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${HAB[e].color}"/>`}).join('')}</g><text class="hex-symbol" x="${x}" y="${y-5}" text-anchor="middle">${tile.animal}</text><text class="hex-name" x="${x}" y="${y+22}" text-anchor="middle">${tile.name}</text></g>`}).join('')}</svg>`}
+function renderHex(){if(state.hexCompleted){E('main').innerHTML=panel(4,'Das letzte Kapitel','Du hast auch die vierte Aufgabe gelöst.')+`<div class="finale"><div class="large-hex">✦</div><div class="eyebrow">Alle vier Kapitel abgeschlossen</div><h2>${CONFIG.finalTitle}</h2><p>${CONFIG.finalText}</p><p class="gift-name" style="font:italic 32px Georgia,serif;margin-top:25px">Cascadia · Im Herzen der Natur</p><div class="controls" style="justify-content:center"><button class="btn secondary" id="revisit">Zurück zur Landschaft</button></div></div></section>`;E('revisit').onclick=()=>{state.hexCompleted=false;save();renderHex()};return}
+ E('main').innerHTML=panel(4,'Das Mosaik der Wildnis','Der letzte Lebensraum ist zerbrochen. Tausche die sechs sechseckigen Plättchen, bis <strong>alle berührenden Kanten dieselbe Farbe</strong> haben. Die Plättchen behalten dabei ihre Ausrichtung.')+
+ `<div class="note">Tippe zuerst ein Plättchen und dann ein zweites an, um ihre Plätze zu tauschen. Das Rätsel hat genau eine Lösung. Gleiche Farben bedeuten denselben Lebensraum.</div>${hexSvg()}<div class="hex-legend">${Object.values(HAB).map(h=>`<span class="legend-item"><i class="legend-swatch" style="background:${h.color}"></i>${h.name}</span>`).join('')}</div><div class="hex-score" id="hex-score">${matches()} / 9 Verbindungen stimmen</div><div class="hex-actions"><button class="btn ghost" id="hex-reset">Neu mischen</button><button class="btn secondary" id="hex-hint">Ein Hinweis</button></div><div class="msg" id="hex-msg" style="text-align:center"></div></section>`;
+ E('main').querySelectorAll('[data-hex]').forEach(g=>{g.onclick=()=>swapHex(Number(g.dataset.hex));g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();swapHex(Number(g.dataset.hex))}}});
+ E('hex-reset').onclick=()=>{state.hexOrder=[4,2,5,0,3,1];selectedHex=-1;save();renderHex()};E('hex-hint').onclick=()=>{E('hex-msg').textContent='Tipp: Der Bär gehört ganz nach links oben. Danach hilft es, zuerst die beiden oberen Nachbarn zu finden.'}
+}
+function swapHex(pos){if(selectedHex===-1){selectedHex=pos;renderHex();return}if(selectedHex===pos){selectedHex=-1;renderHex();return}
+ [state.hexOrder[selectedHex],state.hexOrder[pos]]=[state.hexOrder[pos],state.hexOrder[selectedHex]];selectedHex=-1;save();if(matches()===ADJ.length){state.hexCompleted=true;save();renderHex()}else renderHex()}
+window.addEventListener('hashchange',()=>{selectedConn=[];selectedHex=-1;render();window.scrollTo({top:0})});
+render();
+</script>
+</body>
+</html>
