@@ -12,7 +12,7 @@
     body:after{content:'';pointer-events:none;position:fixed;inset:0;opacity:.11;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cpath d='M-40 46C15 17 20 78 93 41s94 13 188-16 M-37 83C27 46 38 111 108 77s97 20 179-11 M-21 121C60 77 42 151 137 120s90 13 140-7 M-30 175C38 130 73 185 138 159s111 10 145-4 M-42 218C42 176 75 239 144 207s92 2 142-3' fill='none' stroke='%23e1edd0' stroke-width='1.1'/%3E%3C/svg%3E");z-index:-1}
     button,input{font:inherit}button{cursor:pointer}.shell{width:min(850px,calc(100% - 32px));margin:auto}.top{padding:24px 0 0;display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:750;letter-spacing:.16em;text-transform:uppercase}.brand-emblem{width:36px;height:36px;background:#e5cf96;color:#17372e;display:grid;place-items:center;clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);font-size:18px}.tag{border:1px solid var(--border);border-radius:99px;padding:7px 11px;color:var(--muted);font-size:11px;letter-spacing:.07em;text-transform:uppercase}
     .hero{padding:20px 0 8px}.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:800}.hero h1{font-family:Georgia,serif;font-size:clamp(43px,8vw,77px);line-height:1.02;font-weight:400;letter-spacing:-.045em;margin:10px 0 4px}.hero h1 i{color:#a5c79e;font-style:italic}.lead{max-width:600px;font-size:16px;line-height:1.75;color:var(--muted);margin:0}.small-line{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px}.small-line:before{content:'';width:34px;height:1px;background:var(--gold)}
-    .progress{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:8px 0 18px}.progress .step{min-width:0;background:rgba(255,255,255,.055);border:1px solid var(--border);border-radius:11px;padding:11px 12px;color:#9bb1a3}.progress .step.current{border-color:#d8b879;background:#d8b87920;color:#fff6da}.progress .step.done{background:#83a68120;color:#d0e7bd}.progress .num{font-family:Georgia,serif;font-size:20px;margin-bottom:2px}.progress .txt{font-size:11px;letter-spacing:.02em}
+    .progress{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:8px 0 18px}.progress .step{min-width:0;width:100%;text-align:left;font:inherit;background:rgba(255,255,255,.055);border:1px solid var(--border);border-radius:11px;padding:11px 12px;color:#9bb1a3;appearance:none}.progress .step:disabled{cursor:default;opacity:.76}.progress .step:not(:disabled){cursor:pointer;transition:background .16s,border-color .16s}.progress .step:not(:disabled):hover{border-color:#e1c48c;background:#d8b87917}.progress .step:focus-visible{outline:2px solid var(--gold);outline-offset:3}.progress .step.current{border-color:#d8b879;background:#d8b87920;color:#fff6da}.progress .step.done{background:#83a68120;color:#d0e7bd}.progress .num{font-family:Georgia,serif;font-size:20px;margin-bottom:2px}.progress .txt{font-size:11px;letter-spacing:.02em}
     main{min-height:390px}.panel{border:1px solid var(--border);background:linear-gradient(155deg,rgba(34,75,61,.91),rgba(20,54,46,.95));border-radius:22px;padding:clamp(20px,5vw,40px);box-shadow:0 25px 75px #051a153b}.chapter{display:flex;gap:13px;align-items:center;margin-bottom:19px;color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.17em;text-transform:uppercase}.chapter:after{content:'';height:1px;background:var(--border);flex:1}.panel h2{font:400 clamp(29px,5vw,41px)/1.14 Georgia,serif;letter-spacing:-.025em;margin:0 0 13px}.panel p{line-height:1.7;color:var(--muted);margin:0 0 16px}.note{border-left:3px solid #adbb8b;padding:9px 14px;background:#0d2c244f;color:#d4e2ce;border-radius:0 7px 7px 0;font-size:13px;line-height:1.6;margin:16px 0}.label{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.18em;font-weight:800;margin-bottom:8px}
     .btn{background:var(--gold);color:#183027;border:1px solid var(--gold);padding:11px 16px;border-radius:9px;font-weight:750;transition:transform .15s,opacity .15s;min-height:42px}.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.btn.secondary{background:transparent;color:var(--cream);border-color:#78988b}.btn.ghost{background:#ffffff0b;color:var(--cream);border-color:var(--border)}.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:17px}.muted{color:var(--muted);font-size:13px}.msg{min-height:24px;margin:10px 0 6px;color:#f1c7a2;font-size:13px;line-height:1.5}.success{color:#d2e6ae}
     /* Kurz eingeblendete Hinweise für die beiden Wortspiele */
@@ -128,8 +128,18 @@ function routeTo(name){
  else{location.hash=name;if(location.hash==='#'+name)render()}
  window.scrollTo({top:0,behavior:'smooth'});
 }
-function setProgress(n){state.progress=Math.max(state.progress,n);save()}
-function renderProgress(level){E('progress').innerHTML=names.map((n,i)=>`<div class="step ${state.progress>i+1?'done':''} ${level===i+1?'current':''}"><div class="num">${i+1<10?'0':''}${i+1}${state.progress>i+1?' ✓':''}</div><div class="txt">${n}</div></div>`).join('')}
+function setProgress(n){state.progress=Math.max(state.progress,n);save();renderProgress(allRoutes[currentRoute])}
+function renderProgress(level){
+ const keys=Object.keys(allRoutes);
+ const photosComplete=state.photoDone.every(Boolean);
+ E('progress').innerHTML=names.map((n,i)=>{
+  const chapter=i+1;
+  const done=state.progress>chapter||(chapter===4&&state.hexCompleted);
+  const available=chapter<=state.progress&&(chapter<=2||photosComplete);
+  return `<button type="button" class="step ${done?'done':''} ${level===chapter?'current':''}" ${available?`data-route="${keys[i]}"`:'disabled'} ${level===chapter?'aria-current="step"':''} aria-label="Kapitel 0${chapter}: ${n}${done?', abgeschlossen':available?', freigeschaltet':', gesperrt'}"><div class="num">0${chapter}${done?' ✓':''}</div><div class="txt">${n}</div></button>`;
+ }).join('');
+ E('progress').querySelectorAll('[data-route]').forEach(button=>button.onclick=()=>routeTo(button.dataset.route));
+}
 function route(){let key=localMode?localRoute:decodeURIComponent((location.hash||'#start').slice(1)).trim().toLowerCase();return allRoutes[key]?key:'start'}
 function render(){
  document.body.classList.remove('christmas-final');
@@ -419,6 +429,7 @@ function hexSvg(interactive=true){
  }).join('')}</svg>`;
 }
 function renderHex(){
+ renderProgress(4);
  document.body.classList.toggle('christmas-final',Boolean(state.hexCompleted&&state.hexRevealed));
  if(state.hexCompleted){
    if(!state.hexRevealed){
