@@ -36,7 +36,7 @@
   <section class="hero"><div class="eyebrow">Ein Rätsel in vier Kapiteln</div><h1>Operation <i>Wildnis.</i></h1></section>
   <nav class="progress" id="progress" aria-label="Spielfortschritt"></nav>
   <main id="main" aria-live="polite"></main>
-  <footer class="footer"><span>Ein kleines Abenteuer für Heiligabend ✦</span><span>Dein Fortschritt wird nur auf diesem Gerät gespeichert.</span></footer>
+  <footer class="footer"><span>Ein kleines Abenteuer für Heiligabend ✦<br>Inspiriert von Cascadia · Inoffizielles Fanprojekt</span><span>Dein Fortschritt wird nur auf diesem Gerät gespeichert.<br>Wortspiel-Inspiration: <a href="https://github.com/soxfox42/typit" target="_blank" rel="noopener noreferrer" style="color:inherit">typit</a></span></footer>
 </div>
 <script>
 'use strict';
@@ -57,6 +57,26 @@ const CONFIG={
  finalTitle:'Die Wildnis lebt wieder.',
  finalText:'Du hast Wörter entschlüsselt, Spuren gefunden, Zusammenhänge entdeckt und Lebensräume verbunden. Dein Geschenk wartet dort, wo du ein Sechseck findest.'
 };
+// Die Wortliste wird als eigenständige JSON-Datei neben index.html verwaltet.
+let validWords=null,wordListError=false;
+async function loadWordList(){
+ try{
+  const response=await fetch('./target-words.json',{cache:'no-store'});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const source=await response.json();
+  if(!Array.isArray(source.data))throw new Error('Unerwartetes Format');
+  validWords=new Set(source.data.map(w=>String(w).normalize('NFC').toUpperCase()).filter(w=>[...w].length===5));
+  validWords.add(CONFIG.word);
+  wordListError=false;
+ }catch(err){
+  wordListError=true;
+  console.error('Wortliste nicht verfügbar:',err);
+ }
+ if(currentRoute==='start'&&!state.wordWon){
+  const el=E('wordle-status');
+  if(el)el.textContent=wordListError?'Die Wortliste konnte nicht geladen werden. Bitte Seite neu laden.':'';
+ }
+}
 const KEY='operation-wildnis-v2';
 const baseState={progress:1,wordGuesses:[],wordWon:false,photoDone:[false,false],connSolved:[],connMistakes:4,hexOrder:[4,2,5,0,3,1],hexCompleted:false};
 let state={...baseState};
@@ -108,11 +128,11 @@ function drawWord(){const board=E('wordle-board'),keyboard=E('keypad');if(!board
  const won=state.wordWon,over=state.wordGuesses.length>=6;
  board.innerHTML=Array.from({length:6},(_,row)=>{const guess=state.wordGuesses[row]||(row===state.wordGuesses.length&&!won?liveWord:'');const graded=state.wordGuesses[row]?judgeWord(guess,CONFIG.word):null;return `<div class="guess-row">${Array.from({length:5},(_,col)=>`<div class="letter ${graded?graded[col]:(guess[col]?'filled':'')} ${row===state.wordGuesses.length&&col===liveWord.length&&!won?'live':''}">${escapeHtml(guess[col]||'')}</div>`).join('')}</div>`}).join('');
  const rank={absent:1,present:2,correct:3},mapped={};state.wordGuesses.forEach(guess=>judgeWord(guess,CONFIG.word).forEach((g,i)=>{let ch=guess[i];if((rank[g]||0)>(rank[mapped[ch]]||0))mapped[ch]=g}));
- const keyRows=['QWERTZUIOP','ASDFGHJKL','⌫YXCVBNM↵'];keyboard.innerHTML=keyRows.map(line=>`<div class="keys">${Array.from(line).map(ch=>`<button class="key ${ch==='⌫'||ch==='↵'?'wide':''} ${mapped[ch]||''}" data-key="${ch}" ${won||over?'disabled':''} aria-label="${ch==='⌫'?'Löschen':ch==='↵'?'Bestätigen':ch}">${ch}</button>`).join('')}</div>`).join('');
+ const keyRows=['QWERTZUIOP','ASDFGHJKLÄÖÜ','⌫YXCVBNM↵'];keyboard.innerHTML=keyRows.map(line=>`<div class="keys">${Array.from(line).map(ch=>`<button class="key ${ch==='⌫'||ch==='↵'?'wide':''} ${mapped[ch]||''}" data-key="${ch}" ${won||over?'disabled':''} aria-label="${ch==='⌫'?'Löschen':ch==='↵'?'Bestätigen':ch}">${ch}</button>`).join('')}</div>`).join('');
  keyboard.querySelectorAll('[data-key]').forEach(btn=>btn.onclick=()=>wordInput(btn.dataset.key));
 }
 function wordInput(key){if(currentRoute!=='start'||state.wordWon||state.wordGuesses.length>=6)return;
- if(key==='⌫'||key==='Backspace'){liveWord=liveWord.slice(0,-1)}else if(key==='↵'||key==='Enter'){if(liveWord.length!==5){E('wordle-status').textContent='Bitte genau fünf Buchstaben eingeben.';return}state.wordGuesses.push(liveWord);if(liveWord===CONFIG.word){state.wordWon=true;setProgress(2)}liveWord='';save();renderWord();return}
+ if(key==='⌫'||key==='Backspace'){liveWord=liveWord.slice(0,-1)}else if(key==='↵'||key==='Enter'){if(liveWord.length!==5){E('wordle-status').textContent='Bitte genau fünf Buchstaben eingeben.';return}if(!validWords){E('wordle-status').textContent=wordListError?'Wortliste nicht verfügbar. Bitte Seite neu laden.':'Die Wortliste wird noch geladen …';return}if(!validWords.has(liveWord)){E('wordle-status').textContent='Dieses Wort steht nicht in der Wortliste. Versuch es mit einem anderen Wort.';return}state.wordGuesses.push(liveWord);if(liveWord===CONFIG.word){state.wordWon=true;setProgress(2)}liveWord='';save();renderWord();return}
  else if(/^[A-ZÄÖÜ]$/i.test(key)&&liveWord.length<5){liveWord+=key.toUpperCase()}
  E('wordle-status').textContent='';drawWord()}
 document.addEventListener('keydown',e=>{if(currentRoute!=='start'||e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;
@@ -201,6 +221,7 @@ function swapHex(pos){if(selectedHex===-1){selectedHex=pos;renderHex();return}if
  [state.hexOrder[selectedHex],state.hexOrder[pos]]=[state.hexOrder[pos],state.hexOrder[selectedHex]];selectedHex=-1;save();if(matches()===ADJ.length){state.hexCompleted=true;save();renderHex()}else renderHex()}
 window.addEventListener('hashchange',()=>{selectedConn=[];selectedHex=-1;render();window.scrollTo({top:0})});
 render();
+loadWordList();
 </script>
 </body>
 </html>
