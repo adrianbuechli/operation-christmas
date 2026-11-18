@@ -23,7 +23,7 @@
     /* Connections */
     .conn-solved{display:grid;gap:7px;margin:18px 0 10px}.solved-row{border-radius:10px;padding:14px 12px;text-align:center;color:#1e2c25}.solved-row strong{display:block;font-size:16px}.solved-row span{display:block;font-size:12px;margin-top:4px}.conn-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:20px 0 16px}.conn-tile{border-radius:9px;border:1px solid #e5dac1;background:#e3dcca;color:#1d332b;text-align:center;min-height:72px;padding:8px 4px;font-size:clamp(10px,1.5vw,13px);font-weight:800;line-height:1.2;overflow-wrap:anywhere}.conn-tile.selected{background:#658675;color:#fff;border-color:#a6c0a8}.conn-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.dots{display:flex;gap:6px;align-items:center}.dot{width:11px;height:11px;border-radius:50%;background:#e6c991}.dot.lost{background:#3a6255;border:1px solid #719082}.conn-fail{color:#efc49c;font-size:13px}.connect-hint{font-size:13px;color:#eed29a}
     /* Hex */
-    .hex-board{width:100%;max-width:690px;display:block;margin:10px auto 0;touch-action:manipulation}.hex-item{cursor:pointer;transition:filter .17s}.hex-item:focus{outline:none}.hex-item.selected{filter:drop-shadow(0 0 8px #edce83)}.hex-item .tile-bg{fill:#f0e9d7;stroke:#d4d8bd;stroke-width:1.5}.hex-item.selected .tile-bg{fill:#fff5d8;stroke:#e9ca82;stroke-width:4}.hex-edge{stroke-linecap:round;stroke-width:8;pointer-events:none}.hex-symbol{font-size:30px;pointer-events:none}.hex-name{font-size:13px;font-weight:750;fill:#fff3dd;pointer-events:none}.hex-board-bg{fill:none;stroke:#6c8978;stroke-width:1.2;stroke-dasharray:4 7;opacity:.5}.hex-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;margin-top:4px}.legend-item{display:flex;gap:6px;align-items:center;font-size:12px;color:#d7e2ce}.legend-swatch{width:13px;height:13px;border-radius:3px;display:inline-block}.hex-score{text-align:center;color:#d5d7b3;font-family:Georgia,serif;font-size:21px;margin:8px 0 3px}.hex-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+    .hex-board{width:100%;max-width:690px;display:block;margin:10px auto 0;touch-action:manipulation}.hex-item{cursor:pointer;transition:filter .17s}.hex-item:focus{outline:none}.hex-item.selected{filter:drop-shadow(0 0 8px #edce83)}.hex-item .tile-outline{fill:none;stroke:#b2c6af;stroke-width:1.4;pointer-events:none}.hex-item.selected .tile-outline{stroke:#f8d88d;stroke-width:4}.hex-item .tile-bg{fill:#264e43}.hex-item .tile-bg{fill:#f0e9d7;stroke:#d4d8bd;stroke-width:1.5}.hex-item.selected .tile-bg{fill:#fff5d8;stroke:#e9ca82;stroke-width:4}.hex-edge{stroke-linecap:round;stroke-width:8;pointer-events:none}.hex-symbol{font-size:30px;pointer-events:none}.hex-name{font-size:13px;font-weight:750;fill:#fff3dd;pointer-events:none}.hex-board-bg{fill:none;stroke:#6c8978;stroke-width:1.2;stroke-dasharray:4 7;opacity:.5}.hex-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;margin-top:4px}.legend-item{display:flex;gap:6px;align-items:center;font-size:12px;color:#d7e2ce}.legend-swatch{width:13px;height:13px;border-radius:3px;display:inline-block}.hex-score{text-align:center;color:#d5d7b3;font-family:Georgia,serif;font-size:21px;margin:8px 0 3px}.hex-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
     /* Finale */
     .finale{text-align:center;padding:25px 0}.finale .large-hex{font-size:64px;display:grid;place-items:center;margin:0 auto 20px;width:115px;height:115px;background:#e7c887;color:#12362b;clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%)}.finale h2{font-size:clamp(37px,7vw,58px);line-height:1.08}.finale .gift-name{color:#eed39b;font-style:italic}.finale p{max-width:525px;margin:15px auto;line-height:1.8}.locked{text-align:center;padding:45px 10px}.locked .lock{font-size:39px}.locked h2{margin-top:12px}.footer{padding:36px 0 25px;display:flex;justify-content:space-between;gap:10px;font-size:11px;color:#8fac9d}.hidden{display:none!important}
     @media(max-width:650px){.top{padding-top:15px}.hero{padding:18px 0 5px}.progress .step{padding:9px 8px}.progress .txt{font-size:10px}.wordle-layout{margin:18px 0}.wordle-board{gap:5px}.guess-row{gap:5px}.keypad{gap:5px}.keys{gap:3px}.key{height:clamp(42px,10vw,50px);font-size:clamp(11px,3vw,15px)}.wordle-aside{grid-template-columns:1fr 1fr}.wordle-aside .tiny-card{padding:12px}.wordle-aside .tiny-card strong{font-size:19px}.missions{grid-template-columns:1fr}.mission .riddle{min-height:0}.mission{padding:17px}.conn-tile{min-height:64px;font-size:10px}.panel{padding:19px}.footer{flex-direction:column}.key{height:39px}}
@@ -182,40 +182,48 @@ function checkConnections(){if(selectedConn.length!==4||state.connMistakes===0)r
 // Kantenreihenfolge: NO, O, SO, SW, W, NW. Eine eindeutige Anordnung.
 // Die sechs Dateien können später unter bilder/feld-1.png bis feld-6.png ergänzt werden.
 // Die Kanten-Codes sind Platzhalter; mit den echten Cascadia-Fotos stimmen wir sie auf die abgebildeten Lebensräume ab.
+// Die Landschaft stammt aus einer einzigen Illustration. Jeder Ausschnitt
+// behält seine ursprüngliche Bildkoordinate und wird per SVG-Hexagon maskiert.
+const LANDSCAPE_IMAGE='./landschaft.webp';
+const SOURCE_CENTERS=[[224,335],[632,335],[1041,335],[419,710],[827,710],[1232,710]];
 const TILES=[
- {id:0,image:'bilder/feld-1.png',animal:'🐻',name:'Bär',edge:['W','G','G','P','F','W']},
- {id:1,image:'bilder/feld-2.png',animal:'🦊',name:'Fuchs',edge:['W','F','F','R','G','W']},
- {id:2,image:'bilder/feld-3.png',animal:'🦌',name:'Hirsch',edge:['F','W','R','W','F','G']},
- {id:3,image:'bilder/feld-4.png',animal:'🐟',name:'Lachs',edge:['R','G','F','P','F','G']},
- {id:4,image:'bilder/feld-5.png',animal:'🦅',name:'Bussard',edge:['W','R','G','G','G','F']},
- {id:5,image:'bilder/feld-6.png',animal:'🌲',name:'Wald',edge:['W','F','P','G','R','R']}
+ {id:0,animal:'🐟',name:'Lachs'}, {id:1,animal:'🦊',name:'Fuchs'},
+ {id:2,animal:'🦅',name:'Bussard'}, {id:3,animal:'🦌',name:'Hirsch'},
+ {id:4,animal:'🐻',name:'Bär'}, {id:5,animal:'🦌',name:'Hirsch'}
 ];
-const HAB={W:{name:'Wald',color:'#7ba77e'},F:{name:'Fluss',color:'#75aed5'},G:{name:'Gebirge',color:'#b0b8bd'},P:{name:'Prärie',color:'#e2b66b'},R:{name:'Feuchtgebiet',color:'#64b7a8'}};
 const ADJ=[[0,1,1,4],[1,2,1,4],[3,4,1,4],[4,5,1,4],[0,3,2,5],[1,3,3,0],[1,4,2,5],[2,4,3,0],[2,5,2,5]];
-const CENTERS=[[96,93],[207,93],[318,93],[151.5,189],[262.5,189],[373.5,189]];const R=57; // Kleine Lücken zwischen den Plättchen verhindern überlappende Kanten.
+// Jede innere Kante erhält einen einmaligen Schlüssel; deshalb gibt es
+// unter allen 6! = 720 Vertauschungen genau eine vollständig korrekte Lösung.
+const TILE_JOINS=Array.from({length:6},(_,i)=>Array.from({length:6},(_,k)=>`aussen-${i}-${k}`));
+ADJ.forEach(([a,b,ea,eb],i)=>{TILE_JOINS[a][ea]=TILE_JOINS[b][eb]=`uebergang-${i}`});
+const CENTERS=[[96,93],[207,93],[318,93],[151.5,189],[262.5,189],[373.5,189]];
+const R=62;
+let landscapeLoaded=false;
+const landscapePreload=new Image();
+landscapePreload.onload=()=>{landscapeLoaded=true;if(currentRoute==='mosaik')renderHex()};
+landscapePreload.onerror=()=>{landscapeLoaded=false};
+landscapePreload.src=LANDSCAPE_IMAGE;
 function vertices(x,y){return [[x,y-R],[x+Math.sqrt(3)*R/2,y-R/2],[x+Math.sqrt(3)*R/2,y+R/2],[x,y+R],[x-Math.sqrt(3)*R/2,y+R/2],[x-Math.sqrt(3)*R/2,y-R/2]]}
-function matches(){return ADJ.filter(([a,b,ea,eb])=>TILES[state.hexOrder[a]].edge[ea]===TILES[state.hexOrder[b]].edge[eb]).length}
+function matches(){return ADJ.filter(([a,b,ea,eb])=>TILE_JOINS[state.hexOrder[a]][ea]===TILE_JOINS[state.hexOrder[b]][eb]).length}
 function hexSvg(){
- return `<svg class='hex-board' viewBox='0 0 470 285' xmlns='http://www.w3.org/2000/svg' role='group' aria-label='Sechs vertauschbare Sechseckplättchen'>${CENTERS.map(([x,y],pos)=>{
-  const tile=TILES[state.hexOrder[pos]],v=vertices(x,y),inner=v.map(([vx,vy])=>[x+(vx-x)*.87,y+(vy-y)*.87]);
-  const poly=v.map(q=>q.join(',')).join(' ');
-  return `<g class='hex-item ${selectedHex===pos?'selected':''}' data-hex='${pos}' role='button' tabindex='0' aria-label='${tile.name} an Position ${pos+1}'>
-   <polygon class='tile-bg' points='${poly}'/>
-   <defs><clipPath id='hex-clip-${pos}'><polygon points='${poly}'/></clipPath></defs>
-   <image href='${tile.image}' x='${x-60}' y='${y-60}' width='120' height='120' preserveAspectRatio='xMidYMid slice' clip-path='url(#hex-clip-${pos})' opacity='.87' pointer-events='none'/>
-   ${tile.edge.map((edge,i)=>{const a=inner[i],b=inner[(i+1)%6];return `<line class='hex-edge' x1='${a[0]}' y1='${a[1]}' x2='${b[0]}' y2='${b[1]}' stroke='${HAB[edge].color}'/>`}).join('')}
-   <circle cx='${x}' cy='${y-12}' r='21' fill='#16362ec9' pointer-events='none'/>
-   <text class='hex-symbol' x='${x}' y='${y-3}' text-anchor='middle'>${tile.animal}</text>
-   <rect x='${x-34}' y='${y+7}' width='68' height='23' rx='9' fill='#17362cdd' pointer-events='none'/>
-   <text class='hex-name' x='${x}' y='${y+23}' fill='#fff3dd' text-anchor='middle'>${tile.name}</text>
+ const scale=R/239;
+ return `<svg class='hex-board' viewBox='0 0 470 285' xmlns='http://www.w3.org/2000/svg' role='group' aria-label='Sechs vertauschbare Landschaftsplättchen'>${CENTERS.map(([x,y],pos)=>{
+  const tile=TILES[state.hexOrder[pos]],src=SOURCE_CENTERS[tile.id],poly=vertices(x,y).map(p=>p.join(',')).join(' ');
+  const artwork=landscapeLoaded
+    ? `<image href='${LANDSCAPE_IMAGE}' x='${(x-src[0]*scale).toFixed(3)}' y='${(y-src[1]*scale).toFixed(3)}' width='${(1448*scale).toFixed(3)}' height='${(1086*scale).toFixed(3)}' preserveAspectRatio='none' clip-path='url(#land-clip-${pos})' pointer-events='none'/>`
+    : `<polygon points='${poly}' fill='#284c3f'/><text class='hex-symbol' x='${x}' y='${y+10}' text-anchor='middle'>${tile.animal}</text>`;
+  return `<g class='hex-item ${selectedHex===pos?'selected':''}' data-hex='${pos}' role='button' tabindex='0' aria-label='${tile.name}, Plättchen ${pos+1}'>
+   <defs><clipPath id='land-clip-${pos}'><polygon points='${poly}'/></clipPath></defs>
+   <polygon class='tile-bg' points='${poly}'/>${artwork}
+   <polygon class='tile-outline' points='${poly}'/>
   </g>`;
  }).join('')}</svg>`;
 }
 function renderHex(){if(state.hexCompleted){E('main').innerHTML=panel(4,'Das letzte Kapitel','Du hast auch die vierte Aufgabe gelöst.')+`<div class="finale"><div class="large-hex">✦</div><div class="eyebrow">Alle vier Kapitel abgeschlossen</div><h2>${CONFIG.finalTitle}</h2><p>${CONFIG.finalText}</p><p class="gift-name" style="font:italic 32px Georgia,serif;margin-top:25px">Cascadia · Im Herzen der Natur</p><div class="controls" style="justify-content:center"><button class="btn secondary" id="revisit">Zurück zur Landschaft</button></div></div></section>`;E('revisit').onclick=()=>{state.hexCompleted=false;save();renderHex()};return}
- E('main').innerHTML=panel(4,'Das Mosaik der Wildnis','Der letzte Lebensraum ist zerbrochen. Tausche die sechs sechseckigen Plättchen, bis <strong>alle berührenden Kanten dieselbe Farbe</strong> haben. Die Plättchen behalten dabei ihre Ausrichtung.')+
- `<div class="note">Tippe zuerst ein Plättchen und dann ein zweites an, um ihre Plätze zu tauschen. Das Rätsel hat genau eine Lösung. Gleiche Farben bedeuten denselben Lebensraum.</div>${hexSvg()}<div class="hex-legend">${Object.values(HAB).map(h=>`<span class="legend-item"><i class="legend-swatch" style="background:${h.color}"></i>${h.name}</span>`).join('')}</div><div class="hex-score" id="hex-score">${matches()} / 9 Verbindungen stimmen</div><div class="hex-actions"><button class="btn ghost" id="hex-reset">Neu mischen</button><button class="btn secondary" id="hex-hint">Ein Hinweis</button></div><div class="msg" id="hex-msg" style="text-align:center"></div></section>`;
+ E('main').innerHTML=panel(4,'Das Mosaik der Wildnis','Die Wildnis ist durcheinandergeraten. Tausche die sechs Landschaftsplättchen, bis <strong>Fluss, Wälder, Wiesen und Berge wieder ein zusammenhängendes Bild</strong> ergeben. Die Plättchen behalten ihre Ausrichtung.')+
+ `<div class="note">Tippe zuerst ein Plättchen und dann ein zweites an, um ihre Plätze zu tauschen. Alle neun angrenzenden Übergänge müssen zusammenpassen. Es gibt genau eine vollständige Lösung.</div>${hexSvg()}<div class="hex-score" id="hex-score">${matches()} / 9 Landschaftsübergänge stimmen</div><div class="hex-actions"><button class="btn ghost" id="hex-reset">Neu mischen</button><button class="btn secondary" id="hex-hint">Ein Hinweis</button></div><div class="msg" id="hex-msg" style="text-align:center"></div></section>`;
  E('main').querySelectorAll('[data-hex]').forEach(g=>{g.onclick=()=>swapHex(Number(g.dataset.hex));g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();swapHex(Number(g.dataset.hex))}}});
- E('hex-reset').onclick=()=>{state.hexOrder=[4,2,5,0,3,1];selectedHex=-1;save();renderHex()};E('hex-hint').onclick=()=>{E('hex-msg').textContent='Tipp: Der Bär gehört ganz nach links oben. Danach hilft es, zuerst die beiden oberen Nachbarn zu finden.'}
+ E('hex-reset').onclick=()=>{state.hexOrder=[4,2,5,0,3,1];selectedHex=-1;save();renderHex()};E('hex-hint').onclick=()=>{E('hex-msg').textContent='Tipp: Der Lachs gehört nach links oben. Folge danach dem Fluss durch die Landschaft.'}
 }
 function swapHex(pos){if(selectedHex===-1){selectedHex=pos;renderHex();return}if(selectedHex===pos){selectedHex=-1;renderHex();return}
  [state.hexOrder[selectedHex],state.hexOrder[pos]]=[state.hexOrder[pos],state.hexOrder[selectedHex]];selectedHex=-1;save();if(matches()===ADJ.length){state.hexCompleted=true;save();renderHex()}else renderHex()}
