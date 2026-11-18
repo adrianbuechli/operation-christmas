@@ -89,10 +89,7 @@ async function loadWordList(){
   wordListError=true;
   console.error('Wortliste nicht verfügbar:',err);
  }
- if(currentRoute==='start'&&!state.wordWon){
-  const el=E('wordle-status');
-  if(el)el.textContent=wordListError?'Die Wortliste konnte nicht geladen werden. Bitte Seite neu laden.':'';
- }
+ if(currentRoute==='start'&&!state.wordWon&&wordListError)showToast('Wortliste nicht verfügbar – bitte neu laden');
 }
 const KEY='operation-wildnis-v2';
 const baseState={progress:1,wordGuesses:[],wordWon:false,photoDone:[false,false],connSolved:[],connMistakes:4,hexOrder:[4,2,5,0,3,1],hexCompleted:false,hexRevealed:false};
@@ -109,6 +106,14 @@ const names=['Das Wort','Zwei Spuren','Vier Gruppen','Das Mosaik'];
 const localMode=!['http:','https:'].includes(location.protocol);
 let localRoute='start';
 const E=id=>document.getElementById(id);
+let toastTimer=null;
+function showToast(message){
+ const host=E('toast-host');
+ if(!host)return;
+ clearTimeout(toastTimer);
+ host.innerHTML=`<div class="game-toast">${escapeHtml(message)}</div>`;
+ toastTimer=setTimeout(()=>{host.replaceChildren();toastTimer=null},1900);
+}
 function rootUrl(){return location.href.split('#')[0]+'#'}
 function routeTo(name){
  if(localMode){localRoute=name;render()}
@@ -119,6 +124,7 @@ function setProgress(n){state.progress=Math.max(state.progress,n);save()}
 function renderProgress(level){E('progress').innerHTML=names.map((n,i)=>`<div class="step ${state.progress>i+1?'done':''} ${level===i+1?'current':''}"><div class="num">${i+1<10?'0':''}${i+1}${state.progress>i+1?' ✓':''}</div><div class="txt">${n}</div></div>`).join('')}
 function route(){let key=localMode?localRoute:decodeURIComponent((location.hash||'#start').slice(1)).trim().toLowerCase();return allRoutes[key]?key:'start'}
 function render(){
+ document.body.classList.remove('christmas-final');
  if((location.hash||'').toLowerCase()==='#neustart'){E('main').innerHTML=`<section class="panel locked"><h2>Von vorne beginnen?</h2><p>Der Fortschritt auf diesem Gerät wird gelöscht. Die vier Aufgaben starten erneut.</p><div class="controls" style="justify-content:center"><button class="btn" id="really-reset">Ja, neu starten</button><button class="btn secondary" id="cancel-reset">Abbrechen</button></div></section>`;E('really-reset').onclick=()=>{state={...baseState,wordGuesses:[],photoDone:[false,false],connSolved:[],hexOrder:[4,2,5,0,3,1]};liveWord='';selectedConn=[];photos=[null,null];save();routeTo('start')};E('cancel-reset').onclick=()=>routeTo('start');return}
  currentRoute=route();let level=allRoutes[currentRoute];renderProgress(level);let main=E('main');
  if(level>state.progress){main.innerHTML=`<section class="panel locked"><div class="lock">🔒</div><h2>Diese Spur ist noch verborgen.</h2><p>Löse zuerst das vorherige Kapitel, um den Weg freizuschalten.</p><button class="btn" id="back-unlock">Zur letzten Aufgabe</button></section>`;E('back-unlock').onclick=()=>routeTo(Object.keys(allRoutes).find(k=>allRoutes[k]===state.progress)||'start');return}
@@ -138,7 +144,7 @@ function judgeWord(guess,target){let res=Array(5).fill('absent'),freq={};for(let
  for(let i=0;i<5;i++)if(res[i]!=='correct'&&(freq[guess[i]]||0)>0){res[i]='present';freq[guess[i]]--}return res}
 function renderWord(){const won=state.wordWon,over=state.wordGuesses.length>=6&&!won;
  E('main').innerHTML=panel(1,'Das erste Zeichen','Manchmal beginnt die grösste Entdeckung mit einem einzigen Wort. Du hast sechs Versuche für einen Begriff mit fünf Buchstaben. Grün bedeutet richtiger Buchstabe am richtigen Ort, Gold bedeutet richtiger Buchstabe am falschen Ort.')+
- `<div class="wordle-layout"><div><div id="wordle-board" class="wordle-board" aria-label="Wordle mit sechs Reihen"></div><div id="wordle-status" class="msg" role="status"></div></div></div><div class="keypad" id="keypad"></div><div class="controls">${over?'<span class="muted">Alle sechs Versuche verbraucht – starte einfach neu.</span>':''}<button class="btn secondary" id="word-restart">Wordle neu starten</button></div>${won?unlock('natur','Das Wort ist der Schlüssel.','Das Rätselwort ergänzt die Adresse zur nächsten Station.'):''}</section>`;
+ `<div class="wordle-layout"><div><div id="wordle-board" class="wordle-board" aria-label="Wordle mit sechs Reihen"></div></div></div><div class="keypad" id="keypad"></div><div class="controls">${over?'<span class="muted">Alle sechs Versuche verbraucht – starte einfach neu.</span>':''}<button class="btn secondary" id="word-restart">Wordle neu starten</button></div>${won?unlock('natur','Das Wort ist der Schlüssel.','Das Rätselwort ergänzt die Adresse zur nächsten Station.'):''}</section>`;
  drawWord();E('word-restart').onclick=()=>{state.wordGuesses=[];state.wordWon=false;liveWord='';save();renderWord()};if(won)activateCopy();
 }
 function drawWord(){const board=E('wordle-board'),keyboard=E('keypad');if(!board||!keyboard)return;
@@ -148,10 +154,23 @@ function drawWord(){const board=E('wordle-board'),keyboard=E('keypad');if(!board
  const keyRows=['QWERTZUIOP','ASDFGHJKLÄÖÜ','⌫YXCVBNM↵'];keyboard.innerHTML=keyRows.map(line=>`<div class="keys">${Array.from(line).map(ch=>`<button class="key ${ch==='⌫'||ch==='↵'?'wide':''} ${mapped[ch]||''}" data-key="${ch}" ${won||over?'disabled':''} aria-label="${ch==='⌫'?'Löschen':ch==='↵'?'Bestätigen':ch}">${ch}</button>`).join('')}</div>`).join('');
  keyboard.querySelectorAll('[data-key]').forEach(btn=>btn.onclick=()=>wordInput(btn.dataset.key));
 }
-function wordInput(key){if(currentRoute!=='start'||state.wordWon||state.wordGuesses.length>=6)return;
- if(key==='⌫'||key==='Backspace'){liveWord=liveWord.slice(0,-1)}else if(key==='↵'||key==='Enter'){if(liveWord.length!==5){E('wordle-status').textContent='Bitte genau fünf Buchstaben eingeben.';return}if(!validWords){E('wordle-status').textContent=wordListError?'Wortliste nicht verfügbar. Bitte Seite neu laden.':'Die Wortliste wird noch geladen …';return}if(!validWords.has(liveWord)){E('wordle-status').textContent='Dieses Wort steht nicht in der Wortliste. Versuch es mit einem anderen Wort.';return}state.wordGuesses.push(liveWord);if(liveWord===CONFIG.word){state.wordWon=true;setProgress(2)}liveWord='';save();renderWord();return}
- else if(/^[A-ZÄÖÜ]$/i.test(key)&&liveWord.length<5){liveWord+=key.toUpperCase()}
- E('wordle-status').textContent='';drawWord()}
+function wordInput(key){
+ if(currentRoute!=='start'||state.wordWon||state.wordGuesses.length>=6)return;
+ if(key==='⌫'||key==='Backspace'){
+  liveWord=liveWord.slice(0,-1);
+ }else if(key==='↵'||key==='Enter'){
+  if(liveWord.length!==5){showToast('Bitte fünf Buchstaben eingeben');return}
+  if(!validWords){showToast(wordListError?'Wortliste nicht verfügbar – bitte neu laden':'Wortliste wird geladen …');return}
+  if(state.wordGuesses.includes(liveWord)){showToast('Wort bereits verwendet');return}
+  if(!validWords.has(liveWord)){showToast('Nicht in der Wortliste');return}
+  state.wordGuesses.push(liveWord);
+  if(liveWord===CONFIG.word){state.wordWon=true;setProgress(2)}
+  liveWord='';save();renderWord();return;
+ }else if(/^[A-ZÄÖÜ]$/i.test(key)&&liveWord.length<5){
+  liveWord+=key.toUpperCase();
+ }
+ drawWord();
+}
 document.addEventListener('keydown',e=>{if(currentRoute!=='start'||e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;
  if(e.key==='Enter'||e.key==='Backspace'||/^[a-zA-ZäöüÄÖÜ]$/.test(e.key)){e.preventDefault();wordInput(e.key==='Backspace'?'⌫':e.key==='Enter'?'↵':e.key)}});
 /* ============================= 02 FOTOS =========================== */
@@ -185,16 +204,30 @@ const GROUPS=[
 const CONN_ORDER=['LACHS','WERTUNGSKARTE','WALD','ZIEHEN','BÄR','FLUSS','ZAPFENMARKER','ANLEGEN','PRÄRIE','FUCHS','TIERSCHEIBE','WERTEN','GEBIRGE','PLATZIEREN','HIRSCH','WILDNISPLÄTTCHEN'];
 function renderConnections(){const all=state.connSolved.length===4;
  E('main').innerHTML=panel(3,'Was gehört zusammen?','16 Begriffe, vier versteckte Kategorien. Tippe vier Wörter an, die eine gemeinsame Gruppe bilden, und bestätige deine Auswahl. Jede Kategorie enthält genau vier Begriffe.')+
- `<div class="conn-solved">${state.connSolved.map(index=>{const g=GROUPS[index];return `<div class="solved-row" style="background:${g.color}"><strong>${g.name}</strong><span>${g.words.join(' · ')}</span></div>`}).join('')}</div>${!all?`<div class="conn-grid" id="conn-grid">${CONN_ORDER.filter(w=>!state.connSolved.some(i=>GROUPS[i].words.includes(w))).map(w=>`<button class="conn-tile ${selectedConn.includes(w)?'selected':''}" data-word="${w}" aria-pressed="${selectedConn.includes(w)}">${w}</button>`).join('')}</div><div class="conn-footer"><div class="dots" aria-label="Verbleibende Fehlversuche"><span class="muted">Fehlversuche:</span>${[0,1,2,3].map(i=>`<i class="dot ${i>=state.connMistakes?'lost':''}"></i>`).join('')}</div><div class="controls"><button class="btn ghost" id="conn-clear">Auswahl löschen</button><button class="btn" id="conn-submit" ${selectedConn.length===4?'':'disabled'}>Prüfen</button></div></div><div class="msg" id="conn-msg">${escapeHtml(connTip)}</div><div class="controls">${state.connMistakes===0?'<span class="muted">Keine Versuche mehr? Starte diese Aufgabe neu.</span>':''}<button class="btn secondary" id="conn-restart">Connections neu starten</button></div>`:unlock('mosaik','Du hast die Verbindungen erkannt.','Vier Gruppen sind vollständig. Jetzt wartet die letzte Aufgabe auf dich.')}</section>`;
+ `<div class="conn-solved">${state.connSolved.map(index=>{const g=GROUPS[index];return `<div class="solved-row" style="background:${g.color}"><strong>${g.name}</strong><span>${g.words.join(' · ')}</span></div>`}).join('')}</div>${!all?`<div class="conn-grid" id="conn-grid">${CONN_ORDER.filter(w=>!state.connSolved.some(i=>GROUPS[i].words.includes(w))).map(w=>`<button class="conn-tile ${selectedConn.includes(w)?'selected':''}" data-word="${w}" aria-pressed="${selectedConn.includes(w)}">${w}</button>`).join('')}</div><div class="conn-footer"><div class="dots" aria-label="Verbleibende Fehlversuche"><span class="muted">Fehlversuche:</span>${[0,1,2,3].map(i=>`<i class="dot ${i>=state.connMistakes?'lost':''}"></i>`).join('')}</div><div class="controls"><button class="btn ghost" id="conn-clear">Auswahl löschen</button><button class="btn" id="conn-submit" ${selectedConn.length===4?'':'disabled'}>Prüfen</button></div></div><div class="controls">${state.connMistakes===0?'<span class="muted">Keine Versuche mehr? Starte diese Aufgabe neu.</span>':''}<button class="btn secondary" id="conn-restart">Connections neu starten</button></div>`:unlock('mosaik','Du hast die Verbindungen erkannt.','Vier Gruppen sind vollständig. Jetzt wartet die letzte Aufgabe auf dich.')}</section>`;
  if(all){activateCopy();return}
  E('conn-grid').querySelectorAll('[data-word]').forEach(btn=>btn.onclick=()=>{const w=btn.dataset.word;if(state.connMistakes===0)return;selectedConn=selectedConn.includes(w)?selectedConn.filter(x=>x!==w):selectedConn.length<4?[...selectedConn,w]:selectedConn;renderConnections()});
  E('conn-clear').onclick=()=>{selectedConn=[];renderConnections()};E('conn-submit').onclick=checkConnections;
  E('conn-restart').onclick=()=>{state.connMistakes=4;state.connSolved=[];selectedConn=[];connTip='';save();renderConnections()};
 }
-function checkConnections(){if(selectedConn.length!==4||state.connMistakes===0)return;
+function checkConnections(){
+ if(selectedConn.length!==4||state.connMistakes===0)return;
  const match=GROUPS.findIndex(g=>g.words.every(w=>selectedConn.includes(w)));
- if(match>=0&&!state.connSolved.includes(match)){state.connSolved.push(match);selectedConn=[];connTip='Gruppe gefunden ✓';if(state.connSolved.length===4)setProgress(4)}else{state.connMistakes--;const overlap=Math.max(...GROUPS.filter((g,i)=>!state.connSolved.includes(i)).map(g=>g.words.filter(w=>selectedConn.includes(w)).length));connTip=overlap===3?'Knapp! Drei der vier Begriffe gehören tatsächlich zusammen.':'Leider nicht dieselbe Gruppe.';selectedConn=[]}
- save();renderConnections()}
+ let toast;
+ if(match>=0&&!state.connSolved.includes(match)){
+  state.connSolved.push(match);selectedConn=[];
+  toast='Gruppe gefunden!';
+  if(state.connSolved.length===4)setProgress(4);
+ }else{
+  const overlap=Math.max(...GROUPS.filter((g,i)=>!state.connSolved.includes(i)).map(g=>g.words.filter(w=>selectedConn.includes(w)).length));
+  state.connMistakes--;
+  toast=overlap===3?'Eins daneben!':'Nicht dieselbe Gruppe';
+  selectedConn=[];
+ }
+ save();
+ renderConnections();
+ showToast(toast);
+}
 /* =========================== 04 HEXAGON =========================== */
 // Sechs freigestellte PNG-Plättchen; sie sind bereits sechseckig.
 // Die Reihenfolge entspricht dem fertigen Bild (oben 1–3, unten 4–6).
@@ -229,6 +262,7 @@ function hexSvg(interactive=true){
  }).join('')}</svg>`;
 }
 function renderHex(){
+ document.body.classList.toggle('christmas-final',Boolean(state.hexCompleted&&state.hexRevealed));
  if(state.hexCompleted){
    if(!state.hexRevealed){
      E('main').innerHTML=panel(4,'Die Wildnis ist wieder vollständig','Geschafft! Alle sechs Plättchen bilden wieder eine zusammenhängende Landschaft.')+
@@ -236,8 +270,7 @@ function renderHex(){
      E('hex-reveal').onclick=()=>{state.hexRevealed=true;save();renderHex()};
      E('hex-replay').onclick=()=>{state.hexCompleted=false;state.hexRevealed=false;state.hexOrder=[4,2,5,0,3,1];selectedHex=-1;save();renderHex()};
    } else {
-     E('main').innerHTML=panel(4,'Das letzte Kapitel','Du hast auch die vierte Aufgabe gelöst.')+
-     `<div class="finale"><div class="large-hex">✦</div><div class="eyebrow">Alle vier Kapitel abgeschlossen</div><h2>${CONFIG.finalTitle}</h2><p>${CONFIG.finalText}</p><p class="gift-name" style="font:italic 32px Georgia,serif;margin-top:25px">Cascadia · Im Herzen der Natur</p><div class="controls" style="justify-content:center"><button class="btn secondary" id="revisit">Zurück zur Landschaft</button></div></div></section>`;
+     E('main').innerHTML=`<section class="panel finale-panel"><div class="finale"><div class="large-hex">✦</div><h2>${CONFIG.finalTitle}</h2><p class="gift-name" style="font:italic 32px Georgia,serif;margin-top:25px">Cascadia · Im Herzen der Natur</p><div class="controls" style="justify-content:center"><button class="btn secondary" id="revisit">Zurück zur Landschaft</button></div></div></section>`;
      E('revisit').onclick=()=>{state.hexRevealed=false;save();renderHex()};
    }
    return;
