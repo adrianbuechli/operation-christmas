@@ -180,25 +180,159 @@ function wordInput(key){
 document.addEventListener('keydown',e=>{if(currentRoute!=='start'||e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA/.test(document.activeElement?.tagName||''))return;
  if(e.key==='Enter'||e.key==='Backspace'||/^[a-zA-ZäöüÄÖÜ]$/.test(e.key)){e.preventDefault();wordInput(e.key==='Backspace'?'⌫':e.key==='Enter'?'↵':e.key)}});
 /* ============================= 02 FOTOS =========================== */
+const PHOTO_TF='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js';
+const PHOTO_SSD='https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js';
+let photoModelPromise=null,photoGlobalBusy=false;
 function renderPhotos(){
  const done=state.photoDone.every(Boolean);
- E('main').innerHTML=panel(2,'Auf Spurensuche','Ein guter Spieleabend braucht die richtige Vorbereitung. Erfülle zwei kleine Fotoaufträge.')+
- `<div class="missions">${CONFIG.photoTasks.map((task,i)=>`<div class="mission ${state.photoDone[i]?'ok':''}"><div class="icon">${task.icon}</div><div class="label">Fotomission ${i+1} / 2</div><h3>${escapeHtml(task.title)}</h3><p class="riddle">«${escapeHtml(task.clue)}»</p><div class="micro">${escapeHtml(task.instruction)}</div><label class="upload" for="photo-${i}">${state.photoDone[i]?'Bild austauschen':'Bild aufnehmen / auswählen'}</label><input class="file-input" id="photo-${i}" type="file" accept="image/*"><div class="preview" id="preview-${i}">${photos[i]?`<img alt="Ausgewähltes Foto ${i+1}" src="${photos[i]}">`:state.photoDone[i]?'✓ Bild ausgewählt':'Noch kein Bild'}</div><div class="result ${state.photoDone[i]?'ok':''}" id="photo-result-${i}">${state.photoDone[i]?'Foto erledigt ✓':''}</div></div>`).join('')}</div><div class="note">Die Bilddateien werden ausschliesslich auf deinem Gerät angezeigt. Sie werden nicht hochgeladen oder gespeichert. Der Abschluss der zwei Aufgaben wird im Browser gemerkt.</div>${done?unlock('wald','Die Fotosafari ist abgeschlossen.','Du hast beide Aufgaben erledigt. Entdecke nun, welche Begriffe zusammengehören.'):''}</section>`;
+ E('main').innerHTML=panel(2,'Auf Spurensuche','Ein gemütlicher Abend braucht die richtige Vorbereitung. Finde zwei kleine Dinge und halte sie auf Fotos fest.')+
+ `<div class="missions">${CONFIG.photoTasks.map((task,i)=>{
+  const c=photoChecks[i],ready=Boolean(photos[i]),accepted=state.photoDone[i];
+  const skip=ready&&!accepted&&(c.failures>=CONFIG.photoRecognition.manualAfterFailures||c.systemError);
+  return `<div class="mission ${accepted?'ok':''}">
+    <div class="icon">${task.icon}</div><div class="label">Fotomission ${i+1} / 2</div>
+    <h3>${escapeHtml(task.title)}</h3><p class="riddle">«${escapeHtml(task.clue)}»</p>
+    <div class="micro">${escapeHtml(task.instruction)}</div>
+    <div class="preview">${ready?`<canvas id="photo-canvas-${i}" aria-label="Foto mit eingezeichneten KI-Erkennungen"></canvas>`:accepted?'✓ Foto bereits erledigt':'Noch kein Foto'}</div>
+    <div class="photo-actions">
+     <label class="upload" for="camera-${i}">📷 Kamera öffnen</label>
+     <input class="file-input" id="camera-${i}" type="file" accept="image/*" capture="environment">
+     <label class="upload" for="photo-${i}">🖼️ Foto auswählen</label>
+     <input class="file-input" id="photo-${i}" type="file" accept="image/*">
+     <button class="btn secondary" type="button" id="photo-check-${i}" ${!ready||c.busy||accepted||photoGlobalBusy?'disabled':''}>${c.busy?'Bitte warten …':'Mit KI prüfen'}</button>
+     ${skip?`<button type="button" class="btn ghost" id="photo-skip-${i}" ${c.busy?'disabled':''}>Ohne Bilderkennung fortfahren</button>`:''}
+    </div>
+    <div class="photo-ai-state ${c.kind}" role="status" aria-live="polite">${escapeHtml(c.message||(accepted?'Foto erledigt ✓':ready?'Foto bereit. Prüfe es mit der KI.':'Öffne die Kamera oder wähle ein Foto aus.'))}</div>
+    ${c.predictions.length?`<div class="photo-ai-detections">Erkannte Objekte: ${escapeHtml(c.predictions.filter(p=>p.score>=0.20).slice(0,7).map(p=>p.class+' ('+Math.round(p.score*100)+' %)').join(' · ')||'keine')}</div>`:''}
+  </div>`;
+ }).join('')}</div>
+ <div class="note">Die Bilderkennung läuft auf deinem Gerät; Fotos werden nicht hochgeladen. Das KI-Modell wird beim ersten Prüfen heruntergeladen. Nach ${CONFIG.photoRecognition.manualAfterFailures} fehlgeschlagenen KI-Prüfungen (oder sofort bei einem technischen Fehler) kannst du ohne KI fortfahren. Die Kamerafunktion hängt vom Browser ab.</div>
+ ${done?unlock('wald','Die Fotosafari ist abgeschlossen.','Du hast beide Aufgaben erledigt. Entdecke nun, welche Begriffe zusammengehören.'):''}</section>`;
  CONFIG.photoTasks.forEach((task,i)=>{
-   const fi=E('photo-'+i);
-   fi.onchange=()=>{
-     const file=fi.files?.[0];
-     if(!file)return;
-     if(!file.type.startsWith('image/')){E('photo-result-'+i).textContent='Bitte eine Bilddatei wählen.';return}
-     if(photos[i])URL.revokeObjectURL(photos[i]);
-     photos[i]=URL.createObjectURL(file);
-     state.photoDone[i]=true;
-     if(state.photoDone.every(Boolean))setProgress(3);
-     save();
-     renderPhotos();
-   };
+  for(const id of ['photo-'+i,'camera-'+i]){
+   const input=E(id);
+   input.onchange=()=>{const f=input.files?.[0];input.value='';if(f)selectPhoto(i,f)};
+  }
+  E('photo-check-'+i).onclick=()=>checkPhoto(i);
+  const skip=E('photo-skip-'+i);
+  if(skip)skip.onclick=()=>acceptPhoto(i,'Foto ohne Bilderkennung akzeptiert ✓');
+  if(photos[i])drawPhoto(i);
  });
  if(done)activateCopy();
+}
+function drawPhoto(i){
+ const src=photos[i],c=E('photo-canvas-'+i);
+ if(!c||!src)return;
+ c.width=src.width;c.height=src.height;
+ const ctx=c.getContext('2d');
+ if(!ctx)return;
+ ctx.drawImage(src,0,0);
+ photoChecks[i].predictions.filter(p=>p.score>=0.20).forEach(p=>{
+  const [x,y,w,h]=p.bbox;
+  const hit=p.class===CONFIG.photoTasks[i].target&&p.score>=CONFIG.photoRecognition.minConfidence;
+  const col=hit?'#b9f4b5':'#f8d098';
+  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=Math.max(2,c.width/280);
+  ctx.strokeRect(x,y,w,h);
+  const fs=Math.max(14,c.width/43),label=p.class+' '+Math.round(p.score*100)+'%';
+  ctx.font='700 '+fs+'px system-ui,sans-serif';
+  const width=ctx.measureText(label).width;
+  const bx=Math.max(0,Math.min(x,c.width-width-13)),by=y>fs+12?y-fs-10:y;
+  ctx.fillRect(bx,by,width+13,fs+9);
+  ctx.fillStyle='#173428';ctx.fillText(label,bx+6,by+fs);
+ });
+}
+function decodePhoto(file){
+ return new Promise((resolve,reject)=>{
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};
+  img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Foto konnte nicht geöffnet werden'))};
+  img.src=url;
+ });
+}
+async function selectPhoto(i,file){
+ const c=photoChecks[i],version=++c.version;
+ c.busy=true;c.message='Foto wird vorbereitet …';c.kind='';c.predictions=[];
+ photos[i]=null;state.photoDone[i]=false;save();
+ if(currentRoute==='natur')renderPhotos();
+ try{
+  if(file.type&&!file.type.startsWith('image/'))throw new Error('Bitte eine Bilddatei auswählen');
+  const img=await decodePhoto(file);
+  if(version!==c.version)return;
+  const scale=Math.min(1,960/Math.max(img.naturalWidth,img.naturalHeight));
+  const base=document.createElement('canvas');
+  base.width=Math.max(1,Math.round(img.naturalWidth*scale));
+  base.height=Math.max(1,Math.round(img.naturalHeight*scale));
+  const context=base.getContext('2d',{willReadFrequently:true});
+  if(!context)throw new Error('Foto auf diesem Gerät nicht darstellbar');
+  context.drawImage(img,0,0,base.width,base.height);
+  photos[i]=base;c.message='Foto bereit. Prüfe es mit der KI.';
+ }catch(e){if(version===c.version){c.message=e.message||'Foto konnte nicht geladen werden';c.kind='warn'}}
+ finally{if(version===c.version){c.busy=false;if(currentRoute==='natur')renderPhotos()}}
+}
+function loadPhotoScript(url){
+ return new Promise((resolve,reject)=>{
+  const tag=document.createElement('script');let settled=false;
+  const finish=e=>{if(settled)return;settled=true;clearTimeout(timeout);if(e){tag.remove();reject(e)}else resolve()};
+  const timeout=setTimeout(()=>finish(new Error('KI-Download hat zu lange gedauert')),25000);
+  tag.src=url;tag.async=true;tag.onload=()=>finish();tag.onerror=()=>finish(new Error('KI-Bibliothek konnte nicht geladen werden'));
+  document.head.appendChild(tag);
+ });
+}
+function photoTimeout(promise,ms){
+ return Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error('Zeitüberschreitung bei der KI')),ms))]);
+}
+async function photoModel(){
+ if(photoModelPromise)return photoModelPromise;
+ photoModelPromise=(async()=>{
+  if(!window.tf)await loadPhotoScript(PHOTO_TF);
+  if(!window.cocoSsd)await loadPhotoScript(PHOTO_SSD);
+  if(!window.tf||!window.cocoSsd)throw new Error('KI ist nicht verfügbar');
+  let lastError;
+  for(const backend of ['webgl','cpu']){
+   try{
+    if(!await tf.setBackend(backend))continue;
+    await tf.ready();
+    return await photoTimeout(cocoSsd.load({base:'lite_mobilenet_v2'}),55000);
+   }catch(e){lastError=e;console.warn('Bilderkennung Backend '+backend,e)}
+  }
+  throw lastError||new Error('KI auf diesem Gerät nicht verfügbar');
+ })().catch(e=>{photoModelPromise=null;throw e});
+ return photoModelPromise;
+}
+function acceptPhoto(i,message){
+ const c=photoChecks[i];
+ if(!photos[i]||c.busy)return;
+ state.photoDone[i]=true;c.message=message;c.kind='good';c.systemError=false;
+ save();if(state.photoDone.every(Boolean))setProgress(3);
+ if(currentRoute==='natur')renderPhotos();
+}
+async function checkPhoto(i){
+ const c=photoChecks[i],task=CONFIG.photoTasks[i],version=c.version;
+ if(!photos[i]||c.busy||state.photoDone[i]||photoGlobalBusy)return;
+ c.busy=true;photoGlobalBusy=true;c.message='KI lädt oder untersucht das Foto …';c.kind='';
+ if(currentRoute==='natur')renderPhotos();
+ try{
+  const model=await photoModel();
+  if(version!==c.version)return;
+  const predictions=await photoTimeout(model.detect(photos[i],20,0.20),30000);
+  if(version!==c.version)return;
+  c.predictions=predictions;
+  const hits=predictions.filter(p=>p.class===task.target&&p.score>=CONFIG.photoRecognition.minConfidence);
+  if(hits.length){
+   const confidence=Math.round(Math.max(...hits.map(p=>p.score))*100);
+   c.busy=false;acceptPhoto(i,task.targetLabel+' erkannt! ('+confidence+' %). Foto akzeptiert ✓');
+  }else{
+   c.failures++;c.kind='warn';
+   c.message=task.targetLabel+' nicht sicher erkannt. '+(c.failures>=CONFIG.photoRecognition.manualAfterFailures?'Du kannst ein anderes Foto versuchen oder ohne KI fortfahren.':'Bitte nochmals probieren, auch mit einem neuen Foto.');
+  }
+ }catch(e){
+  if(version!==c.version)return;
+  c.systemError=true;c.kind='warn';
+  c.message='KI konnte nicht gestartet werden ('+(e.message||'technischer Fehler')+'). Du kannst ohne Bilderkennung fortfahren.';
+ }finally{
+  photoGlobalBusy=false;
+  if(version===c.version){c.busy=false;if(currentRoute==='natur')renderPhotos()}
+ }
 }
 /* =========================== 03 CONNECTIONS ======================== */
 const GROUPS=[
