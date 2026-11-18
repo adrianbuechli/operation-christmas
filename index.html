@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#102c28">
-  <title>Operation Wildnis · Ein Weihnachtsrätsel</title>
+  <title>Weihnachtsrätsel</title>
   <style>
     :root{--bg:#102c28;--bg2:#163b34;--cream:#f4eedc;--muted:#c4cfb9;--border:rgba(235,239,219,.23);--green:#88ae88;--gold:#dfbb76;--dark:#122a25;--card:#183e35;--soft:#20493e;--red:#c88479}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--cream);font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;min-height:100dvh;overflow-x:hidden}
@@ -50,7 +50,7 @@
 <body>
 <div class="shell">
   <header class="top"><div class="brand"><div class="brand-emblem">✦</div><span>Geheime Mission</span></div><div class="tag">24. Dezember · Edition 01</div></header>
-  <section class="hero"><div class="eyebrow">Ein Rätsel in vier Kapiteln</div><h1>Operation <i>Wildnis.</i></h1></section>
+  <section class="hero"><div class="eyebrow">Ein Rätsel in vier Kapiteln</div><h1>Operation <i>Weihnachten</i></h1></section>
   <nav class="progress" id="progress" aria-label="Spielfortschritt"></nav>
   <main id="main" aria-live="polite"></main>
   <footer class="footer"><span>Ein kleines Abenteuer für Heiligabend ✦<br>Inspiriert von Cascadia · Inoffizielles Fanprojekt</span><span>Dein Fortschritt wird nur auf diesem Gerät gespeichert.<br>Wortliste: <a href="https://github.com/caco3/wordle-de/blob/main/target-words.json" target="_blank" rel="noopener noreferrer" style="color:inherit">Wordle-Deutsch von caco3</a> · <a href="https://github.com/caco3/wordle-de/blob/main/LICENSE.md" target="_blank" rel="noopener noreferrer" style="color:inherit">MIT-Lizenz</a></span></footer>
@@ -91,7 +91,7 @@ async function loadWordList(){
  }
  if(currentRoute==='start'&&!state.wordWon&&wordListError)showToast('Wortliste nicht verfügbar – bitte neu laden');
 }
-const KEY='operation-wildnis-v2';
+const KEY='operation-weihnacht-v2';
 // Feste Startanordnung (im Bild: oben 3–6–5, unten 2–4–1).
 const HEX_START_ORDER=[2,5,4,1,3,0];
 const baseState={progress:1,wordGuesses:[],wordWon:false,photoDone:[false,false],connSolved:[],connMistakes:4,hexOrder:[...HEX_START_ORDER],hexCompleted:false,hexRevealed:false};
