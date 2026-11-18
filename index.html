@@ -50,7 +50,7 @@
 </head>
 <body>
 <div class="shell">
-  <header class="top"><div class="brand"><div class="brand-emblem">✦</div><span>Geheime Mission</span></div><div class="tag">24. Dezember · Edition 01</div></header>
+  <header class="top"><div class="brand"><div class="brand-emblem">✦</div><span>Geheime Mission</span></div><div class="tag">23. Dezember · Edition 01</div></header>
   <section class="hero"><div class="eyebrow">Ein Rätsel in vier Kapiteln</div><h1>Operation <i>Weihnachten</i></h1></section>
   <nav class="progress" id="progress" aria-label="Spielfortschritt"></nav>
   <main id="main" aria-live="polite"></main>
@@ -427,7 +427,7 @@ function renderHex(){
      E('hex-reveal').onclick=()=>{state.hexRevealed=true;save();renderHex()};
      E('hex-replay').onclick=()=>{state.hexCompleted=false;state.hexRevealed=false;state.hexOrder=[...HEX_START_ORDER];selectedHex=-1;save();renderHex()};
    } else {
-     E('main').innerHTML=`<section class="panel finale-panel"><div class="finale"><div class="large-hex">✦</div><h2>${CONFIG.finalTitle}</h2><p class="gift-name" style="font:italic 32px Georgia,serif;margin-top:25px">Cascadia · Im Herzen der Natur</p><div class="controls" style="justify-content:center"><button class="btn secondary" id="revisit">Zurück zur Landschaft</button></div></div></section>`;
+     E('main').innerHTML=`<section class="panel finale-panel"><div class="finale"><div class="large-hex">✦</div><h2>${CONFIG.finalTitle}</h2><p class="gift-name" style="font:italic 32px Georgia,serif;margin-top:25px">Viel Spass mit deinem Geschenk · Spielen ganz ohne Handy</p><div class="controls" style="justify-content:center"><button class="btn secondary" id="revisit">Zurück zur Landschaft</button></div></div></section>`;
      E('revisit').onclick=()=>{state.hexRevealed=false;save();renderHex()};
    }
    return;
