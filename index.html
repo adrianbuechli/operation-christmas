@@ -195,18 +195,18 @@ function renderPhotos(){
     <div class="micro">${escapeHtml(task.instruction)}</div>
     <div class="preview">${ready?`<canvas id="photo-canvas-${i}" aria-label="Foto mit eingezeichneten KI-Erkennungen"></canvas>`:accepted?'✓ Foto bereits erledigt':'Noch kein Foto'}</div>
     <div class="photo-actions">
-     <label class="upload" for="camera-${i}">📷 Kamera öffnen</label>
+     <label class="upload" for="camera-${i}">Kamera öffnen</label>
      <input class="file-input" id="camera-${i}" type="file" accept="image/*" capture="environment">
-     <label class="upload" for="photo-${i}">🖼️ Foto auswählen</label>
+     <label class="upload" for="photo-${i}">Foto auswählen</label>
      <input class="file-input" id="photo-${i}" type="file" accept="image/*">
-     <button class="btn secondary" type="button" id="photo-check-${i}" ${!ready||c.busy||accepted||photoGlobalBusy?'disabled':''}>${c.busy?'Bitte warten …':'Mit KI prüfen'}</button>
+     <button class="btn secondary" type="button" id="photo-check-${i}" ${!ready||c.busy||accepted||photoGlobalBusy?'disabled':''}>${c.busy?'Bitte warten …':'Bild überprüfen'}</button>
      ${skip?`<button type="button" class="btn ghost" id="photo-skip-${i}" ${c.busy?'disabled':''}>Ohne Bilderkennung fortfahren</button>`:''}
     </div>
-    <div class="photo-ai-state ${c.kind}" role="status" aria-live="polite">${escapeHtml(c.message||(accepted?'Foto erledigt ✓':ready?'Foto bereit. Prüfe es mit der KI.':'Öffne die Kamera oder wähle ein Foto aus.'))}</div>
+    <div class="photo-ai-state ${c.kind}" role="status" aria-live="polite">${escapeHtml(c.message||(accepted?'Foto erledigt ✓':ready?'Foto bereit. Lass es überprüfen.':'Öffne die Kamera oder wähle ein Foto aus.'))}</div>
     ${c.predictions.length?`<div class="photo-ai-detections">Erkannte Objekte: ${escapeHtml(c.predictions.filter(p=>p.score>=0.20).slice(0,7).map(p=>p.class+' ('+Math.round(p.score*100)+' %)').join(' · ')||'keine')}</div>`:''}
   </div>`;
  }).join('')}</div>
- <div class="note">Die Bilderkennung läuft auf deinem Gerät; Fotos werden nicht hochgeladen. Das KI-Modell wird beim ersten Prüfen heruntergeladen. Nach ${CONFIG.photoRecognition.manualAfterFailures} fehlgeschlagenen KI-Prüfungen (oder sofort bei einem technischen Fehler) kannst du ohne KI fortfahren. Die Kamerafunktion hängt vom Browser ab.</div>
+ <div class="note">Die Bilderkennung läuft lokal; Fotos werden nicht hochgeladen.</div>
  ${done?unlock('wald','Die Fotosafari ist abgeschlossen.','Du hast beide Aufgaben erledigt. Entdecke nun, welche Begriffe zusammengehören.'):''}</section>`;
  CONFIG.photoTasks.forEach((task,i)=>{
   for(const id of ['photo-'+i,'camera-'+i]){
