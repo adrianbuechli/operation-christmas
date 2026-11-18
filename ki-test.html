@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#102c28">
+<title>Operation Wildnis · Foto-KI-Test</title>
+<style>
+:root{--bg:#102c28;--card:#183b32;--card2:#22473b;--border:#73908072;--text:#f6eedb;--muted:#becfbd;--gold:#dfbd7a;--green:#a4d8a8;--warn:#f4cea0}
+*{box-sizing:border-box}
+body{background:radial-gradient(ellipse at 90% 0%,#245645,transparent 50%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.5;margin:0;min-height:100dvh}
+.wrap{width:min(900px,calc(100% - 28px));margin:auto;padding:22px 0 55px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:34px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:800}
+header a{color:var(--text);text-decoration:none;border:1px solid var(--border);border-radius:9px;padding:9px 12px;letter-spacing:0;text-transform:none;font-size:13px}
+h1,h2{font-family:Georgia,serif;font-weight:400;line-height:1.12}
+h1{font-size:clamp(35px,7vw,58px);margin:0 0 14px}
+h2{font-size:27px;margin:0 0 8px}
+.lead{max-width:660px;color:var(--muted);margin:0 0 28px}
+.banner{background:#1a4036;border:1px solid var(--border);border-radius:13px;padding:15px 19px;margin-bottom:22px}
+.banner strong{color:#f4deb1}
+.banner p{color:var(--muted);margin:5px 0 0;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.card{border:1px solid var(--border);border-radius:16px;background:linear-gradient(145deg,#20483b,#143329);padding:20px;min-width:0}
+.step{color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;margin-bottom:8px}
+.desc{font-size:14px;color:var(--muted);margin:0 0 17px}
+.preview{position:relative;background:#0f2b24;border:1px dashed #94b4a474;border-radius:10px;overflow:hidden;min-height:185px;display:grid;place-items:center;margin-bottom:13px}
+.preview canvas{width:100%;height:auto;display:block}
+.preview .empty{color:#9eb1a7;font-size:13px;text-align:center;padding:38px 15px}
+.file{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.buttons{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.btn,.upload{border:1px solid var(--gold);border-radius:9px;background:var(--gold);color:#20382b;min-height:43px;padding:10px 13px;font-weight:750;font-size:13px;cursor:pointer;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.alt{background:transparent;border-color:#84a596;color:var(--text)}
+.btn.subtle{background:#ffffff0b;color:var(--text);border-color:var(--border)}
+.btn:disabled{opacity:.48;cursor:not-allowed}
+.btn:focus-visible,.upload:focus-visible,header a:focus-visible{outline:3px solid #e9d391;outline-offset:2px}
+.card-status{font-size:13px;color:var(--muted);min-height:40px;margin:12px 0 0}
+.card-status.good{color:#c3e8b7}
+.card-status.warn{color:var(--warn)}
+.result{display:none;border-top:1px solid var(--border);margin-top:13px;padding-top:12px}
+.result.visible{display:block}
+.result strong{font-size:13px;color:var(--text)}
+.result p{font-size:12px;color:var(--muted);margin:4px 0}
+.result ul{padding-left:20px;margin:8px 0;font-size:12px;color:var(--muted)}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.bottom{margin-top:20px;text-align:center;border:1px solid var(--border);background:#20473b80;border-radius:14px;padding:20px}
+.bottom strong{display:block;font:400 23px Georgia,serif;margin-bottom:7px}
+.bottom p{font-size:13px;color:var(--muted);margin:0}
+.bottom .btn{margin-top:13px}
+.note{font-size:12px;color:var(--muted);line-height:1.7;margin-top:21px}
+footer{font-size:11px;color:#a2b8aa;margin-top:28px;border-top:1px solid var(--border);padding-top:17px}
+footer a{color:#d6e6d8}
+[hidden]{display:none!important}
+@media(max-width:680px){header{margin-bottom:25px}.cards{grid-template-columns:1fr}.card{padding:17px}.preview{min-height:160px}.wrap{padding-top:15px}.buttons .btn,.buttons .upload{flex:1 1 auto}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><span>✦ Operation Wildnis · KI-Prototyp</span><a href="./">Zum Weihnachtsrätsel</a></header>
+<main>
+<h1>Foto-KI im Praxistest</h1>
+<p class="lead">Kann das Smartphone einen Stuhl und ein Weinglas erkennen? Wähle für jede Aufgabe ein Foto aus oder fotografiere direkt. Bei Problemen kannst du das Bild jederzeit ohne KI akzeptieren.</p>
+<div class="banner" aria-live="polite">
+<strong id="global-title">Bereit zum Testen</strong>
+<p id="global-detail">Das KI-Modell wird erst geladen, wenn du auf «Mit KI prüfen» klickst. Die Fotos verlassen dein Gerät nicht.</p>
+</div>
+<div class="cards">
+<section class="card" aria-labelledby="chair-title">
+<div class="step">Fotomission 01 / 02</div>
+<h2 id="chair-title">Ein Platz zum Verweilen</h2>
+<p class="desc">Fotografiere einen Stuhl. Die Bilderkennung sucht nach einem <strong>Stuhl</strong> (<code>chair</code>).</p>
+<div class="preview"><canvas id="canvas-0" hidden aria-label="Foto von Mission 1 mit Erkennungsmarkierungen"></canvas><div class="empty" id="empty-0">Noch kein Foto ausgewählt</div></div>
+<div class="buttons">
+<label for="file-0" class="upload">📷 Foto auswählen</label>
+<input class="file" type="file" accept="image/*" id="file-0">
+<button type="button" class="btn alt" id="check-0" disabled>Mit KI prüfen</button>
+<button type="button" class="btn subtle" id="skip-0" disabled>Ohne Bilderkennung fortfahren</button>
+</div>
+<p class="card-status" id="status-0" role="status" aria-live="polite">Wähle zuerst ein Foto aus.</p>
+<div class="result" id="result-0"></div>
+</section>
+<section class="card" aria-labelledby="glass-title">
+<div class="step">Fotomission 02 / 02</div>
+<h2 id="glass-title">Ein kleiner Genuss</h2>
+<p class="desc">Fotografiere ein Weinglas – es darf leer sein. Die Bilderkennung sucht nach einem <strong>Weinglas</strong> (<code>wine glass</code>).</p>
+<div class="preview"><canvas id="canvas-1" hidden aria-label="Foto von Mission 2 mit Erkennungsmarkierungen"></canvas><div class="empty" id="empty-1">Noch kein Foto ausgewählt</div></div>
+<div class="buttons">
+<label for="file-1" class="upload">📷 Foto auswählen</label>
+<input class="file" type="file" accept="image/*" id="file-1">
+<button type="button" class="btn alt" id="check-1" disabled>Mit KI prüfen</button>
+<button type="button" class="btn subtle" id="skip-1" disabled>Ohne Bilderkennung fortfahren</button>
+</div>
+<p class="card-status" id="status-1" role="status" aria-live="polite">Wähle zuerst ein Foto aus.</p>
+<div class="result" id="result-1"></div>
+</section>
+</div>
+<div class="bottom" aria-live="polite">
+<strong id="progress">0 von 2 Fotos akzeptiert</strong>
+<p id="progress-detail">Bei jeder Aufgabe reicht entweder eine erfolgreiche Erkennung oder die manuelle Freigabe.</p>
+<a class="btn" href="./" id="finish-link" hidden>Zurück zum Weihnachtsrätsel</a>
+</div>
+<p class="note">Testversion, unabhängig vom eigentlichen Rätsel: Die Freigaben dieser Seite verändern deinen Spielfortschritt nicht. Das Foto wird vor der Erkennung auf maximal 960 Pixel Kantenlänge reduziert. Nur die KI-Bibliotheken und Modellgewichte werden bei Bedarf aus dem Internet geladen; das Foto selbst wird lokal im Browser verarbeitet. Die KI kann sich irren, besonders bei transparenten Weingläsern.</p>
+</main>
+<footer>
+Verwendet <a href="https://github.com/tensorflow/tfjs-models/tree/master/coco-ssd" target="_blank" rel="noopener noreferrer">TensorFlow.js COCO-SSD</a> (Lite MobileNet v2) und <a href="https://www.tensorflow.org/js" target="_blank" rel="noopener noreferrer">TensorFlow.js</a>. Unabhängiger Prototyp für das private Weihnachtsrätsel.
+</footer>
+</div>
+<script>
+'use strict';
+const MIN_SCORE=0.30;
+const MODEL_TF_URL='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js';
+const MODEL_SSD_URL='https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js';
+const tasks=[
+ {label:'Stuhl',target:'chair',canvas:document.getElementById('canvas-0'),version:0,base:null,accepted:false,busy:false},
+ {label:'Weinglas',target:'wine glass',canvas:document.getElementById('canvas-1'),version:0,base:null,accepted:false,busy:false}
+];
+const el=id=>document.getElementById(id);
+let modelPromise=null;
+function globalStatus(title,detail){el('global-title').textContent=title;el('global-detail').textContent=detail;}
+function status(i,message,kind=''){
+ const e=el('status-'+i);e.textContent=message;e.className='card-status '+kind;
+}
+function updateButtons(i){
+ const t=tasks[i],ready=Boolean(t.base);
+ el('check-'+i).disabled=!ready||t.busy;
+ el('skip-'+i).disabled=!ready||t.busy;
+ el('check-'+i).textContent=t.busy?'Bitte warten …':'Mit KI prüfen';
+}
+function updateProgress(){
+ const accepted=tasks.filter(t=>t.accepted).length;
+ el('progress').textContent=accepted+' von 2 Fotos akzeptiert';
+ el('progress-detail').textContent=accepted===2?'Beide Aufgaben abgeschlossen – du kannst zum Weihnachtsrätsel zurückkehren.':'Bei jeder Aufgabe reicht eine KI-Erkennung oder die manuelle Freigabe.';
+ el('finish-link').hidden=accepted!==2;
+}
+function drawBase(i){
+ const t=tasks[i],c=t.canvas;
+ if(!t.base)return;
+ c.width=t.base.width;c.height=t.base.height;
+ c.getContext('2d').drawImage(t.base,0,0);
+}
+function fileToImage(file){
+ return new Promise((resolve,reject)=>{
+  const url=URL.createObjectURL(file),image=new Image();
+  image.onload=()=>{URL.revokeObjectURL(url);resolve(image);};
+  image.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Bild kann nicht geöffnet werden.'));};
+  image.src=url;
+ });
+}
+async function fileChanged(i,file){
+ if(!file)return;
+ const t=tasks[i],version=++t.version;
+ t.accepted=false;t.base=null;t.busy=true;
+ el('canvas-'+i).hidden=true;el('empty-'+i).hidden=false;
+ el('result-'+i).classList.remove('visible');
+ status(i,'Bild wird vorbereitet …');
+ updateProgress();updateButtons(i);
+ try{
+  if(!file.type.startsWith('image/'))throw new Error('Bitte eine Bilddatei auswählen.');
+  const img=await fileToImage(file);
+  if(version!==t.version)return;
+  const w=img.naturalWidth,h=img.naturalHeight;
+  if(!w||!h)throw new Error('Ungültige Bildgrösse.');
+  const scale=Math.min(1,960/Math.max(w,h));
+  const base=document.createElement('canvas');
+  base.width=Math.max(1,Math.round(w*scale));base.height=Math.max(1,Math.round(h*scale));
+  const ctx=base.getContext('2d',{willReadFrequently:true});
+  if(!ctx)throw new Error('Die Bilddarstellung ist auf diesem Gerät nicht verfügbar.');
+  ctx.drawImage(img,0,0,base.width,base.height);
+  t.base=base;
+  drawBase(i);
+  t.canvas.hidden=false;el('empty-'+i).hidden=true;
+  status(i,'Foto bereit. Du kannst die KI testen oder ohne Bilderkennung fortfahren.');
+ }catch(error){if(version===t.version)status(i,error.message||'Foto konnte nicht geladen werden.','warn');}
+ finally{if(version===t.version){t.busy=false;updateButtons(i);}}
+}
+function loadScript(src,timeout=24000){
+ return new Promise((resolve,reject)=>{
+  const script=document.createElement('script');
+  let completed=false;
+  const finish=(error)=>{
+   if(completed)return;
+   completed=true;clearTimeout(timer);
+   if(error){script.remove();reject(error);}else resolve();
+  };
+  const timer=setTimeout(()=>finish(new Error('Zeitüberschreitung beim Laden der KI-Bibliothek.')),timeout);
+  script.src=src;script.async=true;script.onload=()=>finish();script.onerror=()=>finish(new Error('Die KI-Bibliothek konnte nicht geladen werden.'));
+  document.head.appendChild(script);
+ });
+}
+async function loadModel(){
+ if(modelPromise)return modelPromise;
+ modelPromise=(async()=>{
+  globalStatus('KI wird geladen …','Einmaliger Download der Bibliotheken und Modellgewichte. Du kannst die Fotos auch ohne KI akzeptieren.');
+  if(!window.tf)await loadScript(MODEL_TF_URL);
+  if(!window.cocoSsd)await loadScript(MODEL_SSD_URL);
+  if(!window.tf||!window.cocoSsd)throw new Error('KI-Bibliothek fehlt.');
+  let lastError;
+  for(const backend of ['webgl','cpu']){
+   try{
+    const available=await tf.setBackend(backend);
+    if(!available)continue;
+    await tf.ready();
+    const model=await cocoSsd.load({base:'lite_mobilenet_v2'});
+    globalStatus('KI bereit','Die Erkennung läuft direkt auf deinem Gerät. Es werden keine Fotos an einen Server gesendet.');
+    return model;
+   }catch(error){lastError=error;console.warn('Modellstart mit '+backend+' fehlgeschlagen:',error);}
+  }
+  throw lastError||new Error('Auf diesem Gerät konnte die KI nicht gestartet werden.');
+ })().catch(error=>{
+  globalStatus('KI konnte nicht geladen werden','Du kannst trotzdem beide Aufgaben mit «Ohne Bilderkennung fortfahren» abschliessen.');
+  modelPromise=null;
+  throw error;
+ });
+ return modelPromise;
+}
+function renderPredictions(i,predictions){
+ const t=tasks[i],canvas=t.canvas;
+ drawBase(i);
+ const ctx=canvas.getContext('2d');
+ const relevant=predictions.filter(p=>p.score>=0.20);
+ for(const p of relevant){
+  const [x,y,w,h]=p.bbox;
+  const isTarget=p.class===t.target&&p.score>=MIN_SCORE;
+  ctx.strokeStyle=isTarget?'#b9f4b5':'#f8d098';
+  ctx.fillStyle=ctx.strokeStyle;ctx.lineWidth=Math.max(2,canvas.width/280);
+  ctx.strokeRect(x,y,w,h);
+  const label=p.class+' '+Math.round(p.score*100)+'%';
+  const fontSize=Math.max(14,canvas.width/43);
+  ctx.font='700 '+fontSize+'px system-ui,sans-serif';
+  const textWidth=ctx.measureText(label).width;
+  const bx=Math.max(0,Math.min(x,canvas.width-textWidth-13));
+  const by=y>fontSize+12?y-fontSize-10:y;
+  ctx.fillRect(bx,by,textWidth+13,fontSize+9);
+  ctx.fillStyle='#173428';ctx.fillText(label,bx+6,by+fontSize);
+ }
+ return relevant;
+}
+async function check(i){
+ const t=tasks[i];
+ if(!t.base||t.busy)return;
+ const version=t.version;
+ t.busy=true;updateButtons(i);
+ status(i,'KI-Analyse läuft …');
+ try{
+  const model=await loadModel();
+  if(version!==t.version)return;
+  const predictions=await model.detect(t.base,20,0.20);
+  if(version!==t.version)return;
+  const shown=renderPredictions(i,predictions);
+  const hits=predictions.filter(p=>p.class===t.target&&p.score>=MIN_SCORE);
+  const result=el('result-'+i);
+  result.classList.add('visible');
+  result.replaceChildren();
+  const strong=document.createElement('strong');
+  strong.textContent='Erkannte Objekte (ab 20 % Konfidenz)';
+  result.appendChild(strong);
+  const info=document.createElement('p');
+  info.textContent=shown.length?shown.map(p=>p.class+' ('+Math.round(p.score*100)+' %)').join(' · '):'Keine Objekte über 20 % erkannt.';
+  result.appendChild(info);
+  if(hits.length){
+   t.accepted=true;
+   const confidence=Math.round(Math.max(...hits.map(p=>p.score))*100);
+   status(i,t.label+' erkannt! ('+confidence+' %). Foto akzeptiert ✓','good');
+  }else{
+   t.accepted=false;
+   status(i,t.label+' nicht sicher erkannt. Neues Foto versuchen oder ohne Bilderkennung fortfahren.','warn');
+  }
+ }catch(error){
+  if(version===t.version)status(i,'KI-Prüfung fehlgeschlagen: '+(error.message||'unbekannter Fehler')+'. Du kannst ohne KI fortfahren.','warn');
+ }finally{
+  if(version===t.version){t.busy=false;updateButtons(i);updateProgress();}
+ }
+}
+function skip(i){
+ const t=tasks[i];
+ if(!t.base||t.busy)return;
+ t.accepted=true;drawBase(i);
+ el('result-'+i).classList.remove('visible');
+ status(i,'Foto manuell akzeptiert ✓ (ohne KI-Erkennung).','good');
+ updateProgress();
+}
+for(let i=0;i<tasks.length;i++){
+ el('file-'+i).addEventListener('change',event=>fileChanged(i,event.target.files?.[0]));
+ el('check-'+i).addEventListener('click',()=>check(i));
+ el('skip-'+i).addEventListener('click',()=>skip(i));
+}
+updateProgress();
+</script>
+</body>
+</html>
